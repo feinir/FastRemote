@@ -65,6 +65,7 @@ final class LocalFileWorkspaceController {
         void addFavorite(Path directory);
         void directoryChanged(Path directory);
         default boolean sandboxed() { return false; }
+        default SandboxFolderBookmarks sandboxFolderBookmarks() { return SandboxFolderBookmarks.UNAVAILABLE; }
         default boolean showHiddenFiles() { return false; }
         default boolean showDirectoryTree() { return true; }
         default void setShowHiddenFiles(boolean show) { }
@@ -381,12 +382,20 @@ final class LocalFileWorkspaceController {
     private void refresh() { if (currentDirectory != null) navigate(currentDirectory, false); }
 
     private void chooseAuthorizedDirectory() {
-        SandboxFileAccess.chooseDirectory(pathField.getScene().getWindow()).ifPresent(this::navigate);
+        chooseAuthorizedDirectory(Path.of(System.getProperty("user.home", ".")));
+    }
+
+    private void chooseAuthorizedDirectory(Path suggestedFolder) {
+        SandboxFileAccess.chooseDirectory(pathField.getScene().getWindow(), suggestedFolder,
+                actions.sandboxFolderBookmarks(), this::navigate, this::fail);
     }
 
     private void navigateShortcut(Path directory) {
-        if (actions.sandboxed()) chooseAuthorizedDirectory();
-        else navigate(directory);
+        if (actions.sandboxed() && !actions.sandboxFolderBookmarks().covers(directory)) {
+            chooseAuthorizedDirectory(directory);
+        } else {
+            navigate(directory);
+        }
     }
 
     private void rebuildFavorites() {
@@ -400,6 +409,10 @@ final class LocalFileWorkspaceController {
         MenuItem manage = item("localFiles.manageFavorites", actions::manageFavorites);
         favoritesMenu = ApplicationContextMenus.create(add, manage, new SeparatorMenuItem(),
                 root, home, new SeparatorMenuItem());
+        if (actions.sandboxed()) {
+            SandboxFileAccess.savedFolders(actions.sandboxFolderBookmarks(), this::navigate)
+                    .ifPresent(menu -> favoritesMenu.getItems().add(2, menu));
+        }
         actions.favoritePaths().stream()
                 .distinct().forEach(value -> {
             MenuItem favorite = new MenuItem(value);

@@ -76,6 +76,7 @@ class SharedSettingsRefreshTest {
             List<String> shared = new ArrayList<>(List.of("/old"));
             var actions = proxy(LocalFileWorkspaceController.Actions.class, (method, args) -> {
                 if (method.equals("favoritePaths")) return List.copyOf(shared);
+                if (method.equals("sandboxed")) return false;
                 return null;
             });
             var first = new LocalFileWorkspaceController(unused(LocalFileWorkflow.class), actions, Path.of("/"));

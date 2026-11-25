@@ -67,6 +67,7 @@ public final class FastRemoteApplication extends Application {
     private SystemTrayIntegration systemTray;
     private boolean initialMacOsMenuBarIconEnabled = true;
     private Path applicationDataDirectory;
+    private MacSandboxFolderBookmarks sandboxFolderBookmarks;
     private LaunchRequest pendingLaunchRequest = LaunchRequest.parse(List.of());
     private boolean pendingQuickConnect;
     private boolean reopenAfterClose;
@@ -93,6 +94,15 @@ public final class FastRemoteApplication extends Application {
     public void init() throws IOException {
         linuxMenuPopupFrameSync = LinuxMenuPopupFrameSync.loadIfSupported().orElse(null);
         Path applicationDataDirectory = FastRemotePaths.applicationDataDirectory().toAbsolutePath().normalize();
+        if (ApplicationEdition.current() == ApplicationEdition.STORE && isMacOs()) {
+            try {
+                sandboxFolderBookmarks = new MacSandboxFolderBookmarks(
+                        applicationDataDirectory.resolve("sandbox-folder-bookmarks"));
+            } catch (LinkageError unavailable) {
+                System.getLogger(FastRemoteApplication.class.getName()).log(System.Logger.Level.WARNING,
+                        "macOS folder bookmarks are unavailable", unavailable);
+            }
+        }
         var bootstrapConfig = new YamlGlobalConfigStore(applicationDataDirectory.resolve("global-config.yaml"));
         var bootstrapSettings = new YamlGlobalSettingsRepository(bootstrapConfig).load();
         initialMacOsMenuBarIconEnabled = bootstrapSettings.windowSettings().macOsMenuBarIconEnabled();
@@ -257,6 +267,7 @@ public final class FastRemoteApplication extends Application {
         ApplicationEdition edition = ApplicationEdition.current();
         nextController.configureDistribution(edition == ApplicationEdition.COMMERCIAL,
                 edition != ApplicationEdition.STORE);
+        if (sandboxFolderBookmarks != null) nextController.configureSandboxFolderBookmarks(sandboxFolderBookmarks);
         nextController.configureCommandPaletteUsage(runtime.commandPaletteUsageWorkflow);
         nextController.configureSoftwareUpdates(softwareUpdates::automaticChecksEnabled,
                 softwareUpdates::setAutomaticChecksEnabled, softwareUpdates::checkManually);
@@ -887,6 +898,7 @@ public final class FastRemoteApplication extends Application {
         if (systemTray != null) systemTray.close();
         nativeOpenRequests.clearConsumers();
         if (runtime != null) runtime.close();
+        if (sandboxFolderBookmarks != null) sandboxFolderBookmarks.close();
     }
 
     public static void main(String[] args) {

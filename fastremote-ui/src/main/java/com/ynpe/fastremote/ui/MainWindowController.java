@@ -259,6 +259,7 @@ public final class MainWindowController implements AutoCloseable {
     private final SettingsWorkflow settingsWorkflow;
     private final SnippetWorkflow snippetWorkflow;
     private final LocalTerminalWorkflow localTerminalWorkflow;
+    private SandboxFolderBookmarks sandboxFolderBookmarks = SandboxFolderBookmarks.UNAVAILABLE;
     private final AiAssistantWorkflow aiAssistantWorkflow;
     private CommandPaletteUsageWorkflow commandPaletteUsageWorkflow = CommandPaletteUsageWorkflow.unavailable();
     private final Map<String, CommandPaletteUsage> commandPaletteUsage = new HashMap<>();
@@ -1523,8 +1524,13 @@ public final class MainWindowController implements AutoCloseable {
     }
 
     private void openLocalFilesInWorkspace(Tab anchor) {
+        Path initial = initialLocalFolder();
+        createLocalFileWorkspace(new LocalWorkspaceSession(initial), initial, anchor);
+    }
+
+    private Path initialLocalFolder() {
         Path home = Path.of(System.getProperty("user.home", ".")).toAbsolutePath().normalize();
-        createLocalFileWorkspace(new LocalWorkspaceSession(home), home, anchor);
+        return localTerminalWorkflow.isSandboxed() ? sandboxFolderBookmarks.initialFolder(home) : home;
     }
 
     private Tab createLocalFileWorkspace(LocalWorkspaceSession localWorkspace, Path initialDirectory, Tab anchor) {
@@ -1537,6 +1543,9 @@ public final class MainWindowController implements AutoCloseable {
         LocalFileWorkspaceView.Loaded loaded = LocalFileWorkspaceView.load(workflow,
                 new LocalFileWorkspaceController.Actions() {
                     @Override public boolean sandboxed() { return localTerminalWorkflow.isSandboxed(); }
+                    @Override public SandboxFolderBookmarks sandboxFolderBookmarks() {
+                        return MainWindowController.this.sandboxFolderBookmarks;
+                    }
 
                     @Override public void openPairedTerminal(Path directory) {
                         openPairedLocalTerminal(localWorkspace, directory);
@@ -10183,6 +10192,10 @@ public final class MainWindowController implements AutoCloseable {
                         new ConfigurationDialog.ImportAction(localizer.text("import.program", "Bitvise SSH Client"), this::importBitviseCatalog))));
     }
 
+    public void configureSandboxFolderBookmarks(SandboxFolderBookmarks bookmarks) {
+        sandboxFolderBookmarks = Objects.requireNonNull(bookmarks);
+    }
+
     public void configureDistribution(boolean commercialLicensing, boolean applicationUpdates) {
         this.commercialLicensing = commercialLicensing;
         this.applicationUpdates = applicationUpdates;
@@ -13123,8 +13136,9 @@ public final class MainWindowController implements AutoCloseable {
     }
 
     private VBox createLocalFileBrowser(OpenSession session) {
-        TextField path = new TextField(localBrowserInitialPath(
-                session.currentLocalPath, System.getProperty("user.home", ".")));
+        String defaultPath = localTerminalWorkflow.isSandboxed() ? initialLocalFolder().toString()
+                : System.getProperty("user.home", ".");
+        TextField path = new TextField(localBrowserInitialPath(session.currentLocalPath, defaultPath));
         Button up = sftpActionButton(com.ynpe.fastremote.i18n.Texts.text("legacy.java.780cced2c214a5e8"), Icon.FOLDER_UP);
         Button refresh = sftpActionButton(com.ynpe.fastremote.i18n.Texts.text("legacy.java.aee88743413144a2"), Icon.REFRESH_CW);
         Button upload = sftpActionButton(com.ynpe.fastremote.i18n.Texts.text("legacy.java.9e07e3c0532d4976"), Icon.EXPORT);
@@ -13240,6 +13254,11 @@ public final class MainWindowController implements AutoCloseable {
         root.setOnAction(event -> navigateToRoot(session, local));
         home.setOnAction(event -> navigateToHome(session, local));
         menu.getItems().setAll(add, manage, new SeparatorMenuItem(), root, home, new SeparatorMenuItem());
+        if (local && localTerminalWorkflow.isSandboxed()) {
+            SandboxFileAccess.savedFolders(sandboxFolderBookmarks, folder ->
+                    loadLocalDirectory(session, folder, session.localTable, session.localPathField))
+                    .ifPresent(saved -> menu.getItems().add(2, saved));
+        }
         FavoritePathSections favorites = favoritePathSections(session, local, 30);
         favorites.global().forEach(path -> menu.getItems().add(bookmarkItem(session, local, path)));
         menu.getItems().add(new SeparatorMenuItem());
@@ -13439,7 +13458,7 @@ public final class MainWindowController implements AutoCloseable {
     private void navigateToRoot(OpenSession session, boolean local) {
         if (local) {
             if (localTerminalWorkflow.isSandboxed()) {
-                chooseSftpLocalDirectory(session);
+                chooseSftpLocalDirectory(session, Path.of("/"));
                 return;
             }
             try {
@@ -13455,16 +13474,27 @@ public final class MainWindowController implements AutoCloseable {
     }
 
     private void navigateToHome(OpenSession session, boolean local) {
-        if (local && localTerminalWorkflow.isSandboxed()) chooseSftpLocalDirectory(session);
-        else if (local) requestLocalDirectory(session, System.getProperty("user.home", "."),
-                session.localTable, session.localPathField);
-        else loadRemoteDirectory(session, session.remoteHome, session.remoteTable, session.remotePathField);
+        if (!local) {
+            loadRemoteDirectory(session, session.remoteHome, session.remoteTable, session.remotePathField);
+            return;
+        }
+        Path home = Path.of(System.getProperty("user.home", "."));
+        if (localTerminalWorkflow.isSandboxed() && !sandboxFolderBookmarks.covers(home)) {
+            chooseSftpLocalDirectory(session, home);
+        } else {
+            loadLocalDirectory(session, home, session.localTable, session.localPathField);
+        }
     }
 
     private void chooseSftpLocalDirectory(OpenSession session) {
+        chooseSftpLocalDirectory(session, Path.of(System.getProperty("user.home", ".")));
+    }
+
+    private void chooseSftpLocalDirectory(OpenSession session, Path suggestedFolder) {
         if (session.localTable == null || session.closed.get()) return;
-        SandboxFileAccess.chooseDirectory(rootPane.getScene().getWindow()).ifPresent(directory ->
-                loadLocalDirectory(session, directory, session.localTable, session.localPathField));
+        SandboxFileAccess.chooseDirectory(rootPane.getScene().getWindow(), suggestedFolder, sandboxFolderBookmarks,
+                directory -> loadLocalDirectory(session, directory, session.localTable, session.localPathField),
+                message -> appendFileLog(session, message, StatusTone.ERROR));
     }
 
     private void installLocalTableInteractions(OpenSession session, TableView<LocalFileEntry> table) {
