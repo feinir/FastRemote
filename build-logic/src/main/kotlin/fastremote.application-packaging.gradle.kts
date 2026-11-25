@@ -36,7 +36,7 @@ plugins {
 val edition = rootProject.extra["fastremoteEdition"] as String
 val commercial = edition == "commercial"
 val store = edition == "store"
-val applicationIdentifier = if (store) "com.ynpe.fastremote.store" else "com.ynpe.fastremote"
+val applicationIdentifier = "com.ynpe.fastremote"
 val applicationMainClass = "com.ynpe.fastremote.app.FastRemoteLauncher"
 
 application {
