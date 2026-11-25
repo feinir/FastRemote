@@ -27,12 +27,21 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javafx.application.Platform;
 
-/** Starts a real local PTY with a per-user fr command on its PATH. */
+/** Starts a real local PTY under the permissions of the application process. */
 public final class PtyLocalTerminalWorkflow implements LocalTerminalWorkflow {
+    private final boolean appStore;
     private final ExecutorService executor = new ThreadPoolExecutor(0, 32, 60L, TimeUnit.SECONDS,
             new SynchronousQueue<>(), Thread.ofVirtual().name("fastremote-local-pty-", 0).factory(),
             new ThreadPoolExecutor.AbortPolicy());
     private final AtomicBoolean closed = new AtomicBoolean();
+
+    public PtyLocalTerminalWorkflow() {
+        this(false);
+    }
+
+    public PtyLocalTerminalWorkflow(boolean appStore) {
+        this.appStore = appStore;
+    }
 
     @Override public CompletionStage<LocalTerminalHandle> open(TerminalPreferences preferences) {
         return open(preferences, Path.of(System.getProperty("user.home")));
@@ -51,17 +60,19 @@ public final class PtyLocalTerminalWorkflow implements LocalTerminalWorkflow {
     private CompletionStage<LocalTerminalHandle> open(
             TerminalPreferences preferences, Path initialDirectory, boolean automation) {
         if (closed.get()) return CompletableFuture.failedFuture(new IllegalStateException(com.ynpe.fastremote.i18n.Texts.text("legacy.java.685f7422410b19af")));
-        Path workingDirectory = initialDirectory.toAbsolutePath().normalize();
-        if (!java.nio.file.Files.isDirectory(workingDirectory)) {
-            workingDirectory = Path.of(System.getProperty("user.home")).toAbsolutePath().normalize();
-        }
-        Path resolvedWorkingDirectory = workingDirectory;
+        Path home = Path.of(System.getProperty("user.home")).toAbsolutePath().normalize();
+        Path requestedDirectory = initialDirectory.toAbsolutePath().normalize();
+        // The Store PTY inherits static sandbox permissions. A directory granted to the GUI
+        // through a file picker does not become the shell's working directory outside the container.
+        Path resolvedWorkingDirectory = (!appStore || requestedDirectory.startsWith(home))
+                && java.nio.file.Files.isDirectory(requestedDirectory) ? requestedDirectory : home;
         return CompletableFuture.supplyAsync(() -> {
             LocalShellStartup startup = null;
             try {
                 Map<String, String> environment = new HashMap<>(System.getenv());
                 environment.put("TERM", preferences.terminalType().ptyName());
-                String[] command = shellCommand();
+                String[] command = appStore ? new String[]{"/bin/zsh", "-f"} : shellCommand();
+                if (appStore) environment.put("PATH", "/usr/bin:/bin:/usr/sbin:/sbin");
                 configureShellEnvironment(environment, command);
                 if (com.ynpe.fastremote.app.CommandLineToolInstallation.available()) {
                     Path cliBin = com.ynpe.fastremote.app.CommandLineToolInstallation.prepare(environment);

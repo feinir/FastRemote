@@ -127,7 +127,8 @@ final class ApplicationRuntime implements AutoCloseable {
             return new ApplicationRuntime(resources, licenseGateway, settingsRepository, aiSettingsRepository,
                     connectionWorkflow, catalogWorkflow, settingsWorkflow, snippetWorkflow,
                     commandPaletteUsageWorkflow,
-                    resources.own(new PtyLocalTerminalWorkflow()), automationGateway, aiWorkflow,
+                    resources.own(new PtyLocalTerminalWorkflow(ApplicationEdition.current() == ApplicationEdition.STORE)),
+                    automationGateway, aiWorkflow,
                     diagnosticLogOutput, updates);
         } catch (java.io.IOException | RuntimeException | Error failure) {
             resources.close();

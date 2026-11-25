@@ -18,7 +18,9 @@ and uses its own YNPE update manifest route. Both editions use the FastRemote
 name, installer identity, and standard data location. User consent and operational
 permissions for the vault, SSH, AI, and MCP remain governed by the desktop code.
 
-The Mac App Store edition reuses the public desktop source, product identifier,
-and local capabilities. It uses sandbox entitlements and receives distribution
-updates through the store. Official YNPE and App Store
-packages use the signing identities for their respective distribution channels.
+The Mac App Store edition reuses the public desktop source and product identifier.
+Only the commercial build compiles the License Agent gateway and release integrity
+verifier. The store build uses App Sandbox, starts local terminals inside the app
+container, and receives updates through the store. The Apple Silicon store build
+requires macOS 12 or later. Official YNPE and App Store packages use the signing
+identities for their respective distribution channels.

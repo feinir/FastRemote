@@ -3,7 +3,7 @@ package com.ynpe.fastremote.app;
 
 import com.ynpe.fastremote.domain.license.LicenseStatus;
 import com.ynpe.fastremote.i18n.Localizer;
-import com.ynpe.fastremote.licensing.GoAgentLicenseGateway.LicenseAgentException;
+import com.ynpe.fastremote.licensing.LicenseAgentException;
 
 final class LicenseUiMessages {
     private LicenseUiMessages() { }

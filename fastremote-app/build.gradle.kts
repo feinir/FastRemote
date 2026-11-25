@@ -3,6 +3,10 @@ plugins {
     id("fastremote.application-packaging")
 }
 
+val commercial = rootProject.extra["fastremoteEdition"] == "commercial"
+sourceSets.main { java.srcDir(if (commercial) "src/commercial/java" else "src/open/java") }
+if (commercial) sourceSets.test { java.srcDir("src/commercialTest/java") }
+
 dependencies {
     implementation(project(":fastremote-domain"))
     implementation(project(":fastremote-i18n"))

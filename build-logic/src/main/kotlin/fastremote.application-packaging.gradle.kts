@@ -598,6 +598,19 @@ val prepareJpackageInput = tasks.register<Sync>("prepareJpackageInput") {
     filePermissions { unix("644") }
     duplicatesStrategy = DuplicatesStrategy.FAIL
 
+    if (!commercial) doLast {
+        val input = jpackageInputDirectory.get().asFile
+        check(!input.resolve(licenseAgentName).exists() && !input.resolve("fastremote-integrity.json").exists()) {
+            "An open-source package must exclude commercial authorization artifacts"
+        }
+        val licensingJar = input.listFiles().orEmpty().single { it.name.startsWith("fastremote-licensing-") }
+        ZipFile(licensingJar).use { archive ->
+            check(archive.entries().asSequence().none {
+                it.name.contains("GoAgentLicenseGateway") || it.name.contains("ReleaseIntegrityVerifier")
+            }) { "An open-source package must exclude the commercial authorization verifier" }
+        }
+    }
+
     if (currentPlatform == "macos") {
         inputs.file(signMacJarNativesScript)
         inputs.property("macSigningIdentity", macSigningIdentity.orElse(""))
@@ -632,6 +645,24 @@ val verifyPackagingInputs = tasks.register("verifyPackagingInputs") {
     dependsOn(verifyPackagingIcons, verifyCommercialLegalBundle)
 }
 
+val macStoreMinimumSystemVersion = "12.0"
+val macStoreJpackageResources = layout.buildDirectory.dir("jpackage/store/macos/resources")
+val prepareMacStoreJpackageResources = tasks.register<Sync>("prepareMacStoreJpackageResources") {
+    from(platformJpackageResources)
+    into(macStoreJpackageResources)
+    inputs.property("minimumSystemVersion", macStoreMinimumSystemVersion)
+    filesMatching("Info.plist") {
+        filter { line: String ->
+            line.replace("<string>10.11</string>", "<string>$macStoreMinimumSystemVersion</string>")
+        }
+    }
+}
+val appImageJpackageResources = if (store && currentPlatform == "macos") {
+    macStoreJpackageResources
+} else {
+    provider { platformJpackageResources }
+}
+
 val createAppImage = tasks.register<Exec>("createAppImage") {
     group = "distribution"
     description = "Runs jpackage so platform signing finalizes the embedded license agent before hashing it."
@@ -639,7 +670,10 @@ val createAppImage = tasks.register<Exec>("createAppImage") {
 
     inputs.dir(jpackageInputDirectory)
     inputs.file(platformPackagingIcon)
-    if (platformJpackageResources.asFile.isDirectory) inputs.dir(platformJpackageResources)
+    if (store && currentPlatform == "macos") dependsOn(prepareMacStoreJpackageResources)
+    if ((store && currentPlatform == "macos") || platformJpackageResources.asFile.isDirectory) {
+        inputs.dir(appImageJpackageResources)
+    }
     inputs.property("applicationVersion", packageVersion)
     inputs.property("applicationDescription", applicationDescription)
     inputs.property("prismOrder", prismOrder)
@@ -708,8 +742,9 @@ val createAppImage = tasks.register<Exec>("createAppImage") {
                         )
                     )
                 }
-                if (platformJpackageResources.asFile.isDirectory) {
-                    addAll(listOf("--resource-dir", platformJpackageResources.asFile.absolutePath))
+                val resources = appImageJpackageResources.get().asFile
+                if (resources.isDirectory) {
+                    addAll(listOf("--resource-dir", resources.absolutePath))
                 }
             }
         )
@@ -902,6 +937,16 @@ val packageAppImage = tasks.register("packageAppImage") {
             }
             check(actualIdentifier == applicationIdentifier) {
                 "Packaged macOS application identifier must be $applicationIdentifier, but was $actualIdentifier"
+            }
+            if (store) {
+                val readMinimumVersion = ProcessBuilder(
+                    "/usr/libexec/PlistBuddy", "-c", "Print :LSMinimumSystemVersion", infoPlist.absolutePath,
+                ).redirectErrorStream(true).start()
+                val minimumVersion = readMinimumVersion.inputStream.bufferedReader().use { it.readText() }.trim()
+                check(readMinimumVersion.waitFor() == 0 && minimumVersion == macStoreMinimumSystemVersion) {
+                    "Packaged Mac App Store application must require macOS $macStoreMinimumSystemVersion, " +
+                        "but reported $minimumVersion"
+                }
             }
             val readLocalNetworkDescription = ProcessBuilder(
                 "/usr/libexec/PlistBuddy", "-c", "Print :NSLocalNetworkUsageDescription", infoPlist.absolutePath,
