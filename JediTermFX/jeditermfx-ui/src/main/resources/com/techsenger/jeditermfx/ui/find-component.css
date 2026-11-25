@@ -1,0 +1,166 @@
+.jeditermfx-find-component {
+    -fx-background-color: -jeditermfx-find-panel;
+    -fx-background-radius: 10px;
+    -fx-border-color: -jeditermfx-find-border;
+    -fx-border-radius: 10px;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.28), 14, 0.12, 0, 3);
+}
+
+.jeditermfx-find-component .jeditermfx-find-title {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -jeditermfx-find-text;
+}
+
+.jeditermfx-find-component .jeditermfx-find-label,
+.jeditermfx-find-component .jeditermfx-find-option {
+    -fx-font-size: 13px;
+    -fx-text-fill: -jeditermfx-find-text;
+}
+
+.jeditermfx-find-component .jeditermfx-find-field {
+    -fx-min-height: 32px;
+    -fx-pref-height: 32px;
+    -fx-max-height: 32px;
+    -fx-padding: 0;
+    -fx-background-color: -jeditermfx-find-control;
+    -fx-background-radius: 6px;
+    -fx-border-color: -jeditermfx-find-border;
+    -fx-border-radius: 6px;
+    -fx-text-fill: -jeditermfx-find-text;
+    -fx-prompt-text-fill: -jeditermfx-find-muted;
+}
+
+.jeditermfx-find-component .jeditermfx-find-field > .text-field {
+    -fx-padding: 0 8px;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-text-fill: -jeditermfx-find-text;
+    -fx-prompt-text-fill: -jeditermfx-find-muted;
+}
+
+.jeditermfx-find-component .jeditermfx-find-field:focused {
+    -fx-border-color: -jeditermfx-find-border;
+    -fx-effect: null;
+}
+
+.jeditermfx-find-component .jeditermfx-find-field > .text-field .caret {
+    -fx-stroke: -jeditermfx-find-text;
+}
+
+.jeditermfx-find-component .jeditermfx-find-field > .arrow-button {
+    -fx-padding: 0 9px;
+    -fx-background-color: -jeditermfx-find-control;
+    -fx-border-color: transparent transparent transparent -jeditermfx-find-border;
+    -fx-border-width: 0 0 0 1px;
+}
+
+.jeditermfx-find-component .jeditermfx-find-field > .arrow-button > .arrow {
+    -fx-background-color: -jeditermfx-find-muted;
+}
+
+.jeditermfx-find-component .jeditermfx-find-action {
+    -fx-min-height: 30px;
+    -fx-padding: 3px 8px;
+    -fx-background-color: -jeditermfx-find-control;
+    -fx-background-radius: 6px;
+    -fx-border-color: -jeditermfx-find-border;
+    -fx-border-radius: 6px;
+    -fx-text-fill: -jeditermfx-find-text;
+}
+
+.jeditermfx-find-component .jeditermfx-find-action:hover {
+    -fx-background-color: -jeditermfx-find-hover;
+}
+
+.jeditermfx-find-component .jeditermfx-find-action:pressed {
+    -fx-background-color: -jeditermfx-find-pressed;
+}
+
+.jeditermfx-find-component .jeditermfx-find-action:focused {
+    -fx-border-color: -jeditermfx-find-accent;
+}
+
+.jeditermfx-find-component .jeditermfx-find-close {
+    -fx-min-width: 28px;
+    -fx-pref-width: 28px;
+    -fx-min-height: 26px;
+    -fx-pref-height: 26px;
+    -fx-padding: 0;
+    -fx-background-color: transparent;
+    -fx-background-radius: 6px;
+    -fx-border-color: -jeditermfx-find-border;
+    -fx-border-radius: 6px;
+    -fx-border-width: 1px;
+    -fx-text-fill: #ef5350;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.jeditermfx-find-component .jeditermfx-find-close:hover {
+    -fx-background-color: rgba(239, 83, 80, 0.14);
+}
+
+.jeditermfx-find-component .jeditermfx-find-option > .box {
+    -fx-background-color: -jeditermfx-find-control;
+    -fx-border-color: -jeditermfx-find-border;
+}
+
+.jeditermfx-find-component .jeditermfx-find-option:selected > .box {
+    -fx-background-color: -jeditermfx-find-accent;
+    -fx-border-color: -jeditermfx-find-accent;
+}
+
+.jeditermfx-find-component .jeditermfx-find-option:selected > .box > .mark {
+    -fx-background-color: -jeditermfx-find-accent-text;
+}
+
+.jeditermfx-find-component .jeditermfx-find-result {
+    -fx-font-size: 11px;
+    -fx-text-fill: -jeditermfx-find-muted;
+}
+
+.list-view.jeditermfx-find-history-dark {
+    -fx-background-color: #1b2028;
+    -fx-background-radius: 9px;
+    -fx-border-color: #35404f;
+    -fx-border-radius: 9px;
+    -fx-padding: 4px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.38), 16, 0, 0, 5);
+}
+
+.list-view.jeditermfx-find-history-dark .list-cell {
+    -fx-background-color: #202630;
+    -fx-background-radius: 5px;
+    -fx-text-fill: #dde3ea;
+}
+
+.list-view.jeditermfx-find-history-dark .list-cell:hover,
+.list-view.jeditermfx-find-history-dark .list-cell:focused,
+.list-view.jeditermfx-find-history-dark .list-cell:selected {
+    -fx-background-color: #31558a;
+    -fx-text-fill: #ffffff;
+}
+
+.list-view.jeditermfx-find-history-light {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 9px;
+    -fx-border-color: #d8dee8;
+    -fx-border-radius: 9px;
+    -fx-padding: 4px;
+    -fx-effect: dropshadow(gaussian, rgba(31, 42, 61, 0.18), 16, 0, 0, 5);
+}
+
+.list-view.jeditermfx-find-history-light .list-cell {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 5px;
+    -fx-text-fill: #263238;
+}
+
+.list-view.jeditermfx-find-history-light .list-cell:hover,
+.list-view.jeditermfx-find-history-light .list-cell:focused,
+.list-view.jeditermfx-find-history-light .list-cell:selected {
+    -fx-background-color: #dbe8fb;
+    -fx-text-fill: #1f2a3d;
+}

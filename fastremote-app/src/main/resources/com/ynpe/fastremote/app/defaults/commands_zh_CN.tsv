@@ -1,0 +1,177 @@
+@FASTREMOTE-BUILTIN-COMMANDS:1
+@group	core.group.001	Linux常用	BLUE
+@command	core.command.0001	core.group.001	Linux · 系统与发行版	uname -a; printf '\\\\n'; cat /etc/os-release 2>/dev/null	Linux：显示内核、架构和发行版标识；极简系统可能没有 /etc/os-release。
+@command	core.command.0002	core.group.001	Linux · 主机信息	hostnamectl 2>/dev/null || hostname	Linux：显示主机名；systemd 环境还会显示机型、虚拟化和内核等元数据。
+@command	core.command.0003	core.group.001	Linux · 当前身份	whoami; id	Linux：显示当前用户及 UID、主组和附属组。
+@command	core.command.0004	core.group.001	Linux · 在线时长	uptime	Linux：显示系统运行时长、当前用户数和 1/5/15 分钟负载均值。
+@command	core.command.0005	core.group.001	Linux · 当前登录用户	w	Linux：显示当前登录会话、来源、空闲时间和前台活动。
+@command	core.command.0006	core.group.001	Linux · 最近登录	last -n 25	Linux：读取登录历史并显示最近 25 条记录；结果取决于系统是否保留 wtmp。
+@command	core.command.0007	core.group.001	Linux · 最近重启	last reboot -n 10	Linux：从登录历史中显示最近 10 次启动记录；结果取决于系统是否保留 wtmp。
+@command	core.command.0008	core.group.001	Linux · 时间与时区	timedatectl 2>/dev/null || date	Linux：显示时间、时区和同步状态；非 systemd 系统回退为当前日期时间。
+@command	core.command.0009	core.group.001	Linux · CPU 信息	lscpu	Linux：显示 CPU 架构、核心、线程、NUMA 和虚拟化信息；需要 util-linux。
+@command	core.command.0010	core.group.001	Linux · 内存使用	free -h	Linux：以易读单位显示物理内存、可用内存和交换空间。
+@command	core.command.0011	core.group.001	Linux · 资源快照	top -b -n 1 | head -n 35	Linux：采集一次非交互式负载、CPU、内存和进程快照；不同 top 实现的输出可能不同。
+@command	core.command.0012	core.group.001	Linux · 全部进程	ps -ef	Linux：显示全部进程的用户、PID、父 PID、启动时间和命令。
+@command	core.command.0013	core.group.001	Linux · 高占用进程	ps -eo pid,ppid,user,stat,%cpu,%mem,etime,comm,args --sort=-%cpu | head -n 31	Linux：按 CPU 使用率显示前 30 个进程；%CPU 是 ps 统计口径，不等同于瞬时采样。
+@command	core.command.0014	core.group.001	Linux · 查找进程	pgrep -af "{{input,进程名称或正则,default=nginx}}"	Linux：按名称或正则匹配进程，并显示 PID 与完整命令行；无匹配时退出码为 1。
+@command	core.command.0015	core.group.001	Linux · 进程树	(command -v pstree >/dev/null && pstree -ap) || ps -ef --forest	Linux：显示进程父子关系；优先使用 pstree，否则使用 GNU ps 的树形输出。
+@command	core.command.0016	core.group.001	Linux · 进程打开文件	lsof -nP -p "{{input,进程PID,default=1}}"	Linux：显示指定进程打开的文件和套接字；需要 lsof，查看其他用户进程可能需要管理员权限。
+@command	core.command.0017	core.group.001	Linux · 文件系统空间	df -hT	Linux：以易读单位显示已挂载文件系统的类型、容量和空间使用率。
+@command	core.command.0018	core.group.001	Linux · 文件系统 inode	df -ih	Linux：显示 inode 使用情况，用于排查空间尚有剩余但无法创建文件的问题。
+@command	core.command.0019	core.group.001	Linux · 块设备	lsblk -o NAME,TYPE,SIZE,FSTYPE,FSVER,LABEL,UUID,MOUNTPOINTS	Linux：显示磁盘、分区、文件系统标识和挂载点；需要 util-linux。
+@command	core.command.0020	core.group.001	Linux · 挂载信息	findmnt -o TARGET,SOURCE,FSTYPE,OPTIONS	Linux：以树形结构显示挂载源、目标、文件系统和选项；需要 util-linux。
+@command	core.command.0021	core.group.001	Linux · 查看目录	ls -lah -- "{{input,目录路径,default=/var/log}}"	Linux：列出指定目录的普通项、隐藏项、权限、所有者、大小和时间。
+@command	core.command.0022	core.group.001	Linux · 目录占用	du -sh -- "{{input,目录路径,default=/var/log}}"	Linux：汇总指定目录占用；大型目录可能耗时，并可能因权限不足跳过内容。
+@command	core.command.0023	core.group.001	Linux · 一级目录占用	du -xhd 1 -- "{{input,目录路径,default=/var}}" 2>/dev/null | sort -h	Linux/GNU：按大小列出同一文件系统内指定目录及其直接子目录；大型目录可能耗时。
+@command	core.command.0024	core.group.001	Linux · 大文件查找	find "{{input,目录路径,default=/var}}" -xdev -type f -size +"{{input,最小大小,default=100M}}" -printf '%s %p\\\\n' 2>/dev/null | sort -n | tail -n 50	Linux/GNU：在同一文件系统内列出最大的 50 个超限文件；扫描大型目录可能耗时。
+@command	core.command.0025	core.group.001	Linux · 内核最近消息	dmesg --level=emerg,alert,crit,err,warn 2>/dev/null | tail -n 100	Linux：显示最近 100 条警告及以上级别的内核消息；部分系统限制普通用户读取。
+@command	core.command.0026	core.group.001	Linux · 系统严重日志	journalctl -p 0..3 -n 100 --no-pager	Linux/systemd：显示最近 100 条错误及更严重的系统日志；读取完整日志可能需要权限。
+@command	core.command.0027	core.group.001	Linux · 本次启动日志	journalctl -b -n 100 --no-pager	Linux/systemd：显示本次启动最近 100 条日志，不持续跟踪。
+@command	core.command.0028	core.group.001	Linux · 失败服务	systemctl --failed --no-pager	Linux/systemd：列出当前失败的 systemd 单元，不修改服务状态。
+@command	core.command.0029	core.group.001	Linux · 服务状态	systemctl status "{{input,服务名,default=sshd}}" --no-pager	Linux/systemd：查看指定服务状态和近期日志，不执行启动、停止或重启。
+@command	core.command.0030	core.group.001	Linux · 服务最近日志	journalctl -u "{{input,服务名,default=sshd}}" -n "{{input,日志条数,default=100}}" --no-pager	Linux/systemd：显示指定服务最近若干条日志，不持续跟踪。
+@command	core.command.0031	core.group.001	Linux · 定时器列表	systemctl list-timers --all --no-pager	Linux/systemd：显示 systemd 定时器的上次和下次触发时间。
+@command	core.command.0032	core.group.001	Linux · Cron 计划	(crontab -l 2>/dev/null || true); printf '\\\\n--- /etc/cron.d ---\\\\n'; ls -la /etc/cron.d 2>/dev/null	Linux：显示当前用户的 crontab 和系统 cron.d 目录；不读取其他用户的计划任务。
+@command	core.command.0033	core.group.001	Linux · 网络地址	ip -brief address	Linux：紧凑显示网络接口状态及 IPv4/IPv6 地址；需要 iproute2。
+@command	core.command.0034	core.group.001	Linux · 路由表	ip route show table all	Linux：显示所有路由表中的 IPv4 路由；策略路由环境下比默认表更完整。
+@command	core.command.0035	core.group.001	Linux · IPv6 路由	ip -6 route show table all	Linux：显示所有路由表中的 IPv6 路由；未启用 IPv6 时可能为空。
+@command	core.command.0036	core.group.001	Linux · 监听端口	ss -H -lntup	Linux：显示 TCP/UDP 监听套接字；进程信息的完整性取决于当前权限。
+@command	core.command.0037	core.group.001	Linux · 已建立 TCP	ss -H -tnp state established	Linux：显示已建立的 TCP 连接及当前用户可见的进程信息。
+@command	core.command.0038	core.group.001	Linux · 邻居缓存	ip neigh show	Linux：显示 IPv4 ARP 与 IPv6 NDP 邻居缓存及状态。
+@command	core.command.0039	core.group.001	Linux · DNS 状态	(resolvectl status 2>/dev/null || systemd-resolve --status 2>/dev/null || cat /etc/resolv.conf)	Linux：优先显示 systemd-resolved 的逐接口状态，否则显示静态解析器配置。
+@command	core.command.0040	core.group.001	Linux · DNS 查询	(getent ahosts "{{input,域名,default=example.com}}" || host "{{input,域名,default=example.com}}" || nslookup "{{input,域名,default=example.com}}")	Linux：解析指定域名；优先使用系统 NSS，后备工具是否存在取决于安装情况。
+@command	core.command.0041	core.group.001	Linux · Ping 目标	ping -c 4 -W 3 "{{input,目标主机,default=1.1.1.1}}"	Linux：向目标发送 4 个 ICMP 探测包，每个响应最多等待 3 秒；防火墙可能丢弃 ICMP。
+@command	core.command.0042	core.group.001	Linux · 路由追踪	(tracepath "{{input,目标主机,default=1.1.1.1}}" || traceroute "{{input,目标主机,default=1.1.1.1}}")	Linux：跟踪到目标的网络路径；需要 tracepath 或 traceroute，部分节点可能不响应。
+@command	core.command.0043	core.group.001	Linux · 测试 TCP 端口	nc -vz -w 5 "{{input,目标主机,default=1.1.1.1}}" "{{input,目标端口,default=22}}"	Linux：使用 netcat 测试 TCP 建连，5 秒超时；需要安装 nc。
+@command	core.command.0044	core.group.001	Linux · HTTP 响应头	curl -fsSIL --max-time 10 "{{input,URL,default=https://example.com}}"	Linux：跟随重定向并显示 HTTP 响应头，10 秒超时；需要 curl，证书校验保持启用。
+@command	core.command.0045	core.group.001	Linux · iptables 规则	iptables -nL -v --line-numbers	Linux/iptables：只读列出 IPv4 过滤表规则和计数器；通常需要管理员权限，不代表 nftables 全部规则。
+@command	core.command.0046	core.group.001	Linux · nftables 规则	nft list ruleset	Linux/nftables：只读列出完整 nftables 规则集；需要 nft，通常需要管理员权限。
+@command	core.command.0047	core.group.001	Linux · firewalld 状态	firewall-cmd --state; firewall-cmd --get-active-zones; firewall-cmd --list-all	Linux/firewalld：显示服务状态、活动区域及默认区域规则；可能需要权限。
+@command	core.command.0048	core.group.001	Linux · UFW 状态	ufw status verbose	Linux/UFW：显示 UFW 状态、默认策略和规则；通常需要管理员权限。
+@command	core.command.0049	core.group.001	Linux · OpenSSH 版本	ssh -V; sshd -V 2>&1 | head -n 1	Linux/OpenSSH：显示客户端与服务端版本；sshd 不在 PATH 或无权限执行时服务端信息可能缺失。
+@command	core.command.0050	core.group.001	Linux · 软件包查询	(command -v rpm >/dev/null && rpm -qa | grep -i "{{input,软件包关键字,default=openssh}}") || (command -v dpkg-query >/dev/null && dpkg-query -W '*{{input,软件包关键字,default=openssh}}*')	Linux：在 RPM 或 Debian 系统中查询已安装软件包；关键字按对应包管理器规则匹配。
+@command	core.command.0051	core.group.001	Linux · Java 版本	java -version	Linux：显示当前 PATH 中 Java 的运行时版本；版本信息通常写入标准错误。
+@command	core.command.0052	core.group.001	Linux · 虚拟化类型	(systemd-detect-virt 2>/dev/null || virt-what 2>/dev/null || true)	Linux：尝试识别虚拟机或容器；空输出也可能表示物理机或缺少识别工具。
+@command	core.command.0053	core.group.001	Linux · Docker 容器	docker ps --all	Linux/Docker：显示全部容器及状态；需要 Docker CLI 和访问守护进程的权限。
+@command	core.command.0054	core.group.001	Linux · Docker 容器详情	docker inspect "{{input,容器名称或ID,default=my-container}}"	Linux/Docker：显示指定容器的完整配置和运行状态；输出可能包含环境变量等敏感业务数据。
+@group	core.group.002	Windows常用	BLUE
+@command	core.command.0055	core.group.002	Windows · 当前身份	whoami.exe /all	Windows：显示当前用户 SID、组、特权和完整性级别。
+@command	core.command.0056	core.group.002	Windows · 系统版本	cmd.exe /d /c ver	Windows：显示命令解释器报告的 Windows 版本号；信息较简略。
+@command	core.command.0057	core.group.002	Windows · 系统摘要	systeminfo.exe	Windows：显示操作系统、补丁、启动时间、内存、域和网络摘要；查询可能需要数秒。
+@command	core.command.0058	core.group.002	Windows · 操作系统详情	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-CimInstance Win32_OperatingSystem | Format-List Caption,Version,BuildNumber,OSArchitecture,InstallDate,LastBootUpTime"	Windows/PowerShell：显示操作系统版本、架构、安装日期和上次启动时间。
+@command	core.command.0059	core.group.002	Windows · 计算机信息	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-CimInstance Win32_ComputerSystem | Format-List Manufacturer,Model,SystemType,Domain,PartOfDomain,TotalPhysicalMemory"	Windows/PowerShell：显示厂商、型号、系统类型、域成员关系和物理内存总量。
+@command	core.command.0060	core.group.002	Windows · 最近补丁	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-HotFix | Sort-Object InstalledOn -Descending | Select-Object -First 30 HotFixID,Description,InstalledOn"	Windows/PowerShell：显示最近 30 条可由 Get-HotFix 读取的更新；不涵盖所有更新类型。
+@command	core.command.0061	core.group.002	Windows · 在线时长	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "$os=Get-CimInstance Win32_OperatingSystem; [pscustomobject]@{LastBoot=$os.LastBootUpTime; Uptime=(Get-Date)-$os.LastBootUpTime} | Format-List"	Windows/PowerShell：根据上次启动时间计算在线时长。
+@command	core.command.0062	core.group.002	Windows · 时间与时区	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-Date; Get-TimeZone | Format-List Id,DisplayName,BaseUtcOffset,SupportsDaylightSavingTime"	Windows/PowerShell：显示当前日期时间和时区配置。
+@command	core.command.0063	core.group.002	Windows · 登录会话	quser.exe	Windows：显示交互式用户会话、状态和空闲时间；部分版本未提供该命令。
+@command	core.command.0064	core.group.002	Windows · CPU 信息	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-CimInstance Win32_Processor | Format-List Name,Manufacturer,NumberOfCores,NumberOfLogicalProcessors,MaxClockSpeed,VirtualizationFirmwareEnabled"	Windows/PowerShell：显示处理器型号、核心、逻辑处理器和固件虚拟化状态。
+@command	core.command.0065	core.group.002	Windows · 内存信息	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-CimInstance Win32_OperatingSystem | Select-Object @{N='TotalMB';E={[math]::Round($_.TotalVisibleMemorySize/1024)}},@{N='FreeMB';E={[math]::Round($_.FreePhysicalMemory/1024)}},@{N='FreePercent';E={[math]::Round(100*$_.FreePhysicalMemory/$_.TotalVisibleMemorySize,1)}} | Format-List"	Windows/PowerShell：显示操作系统可见物理内存的总量、空闲量和空闲比例。
+@command	core.command.0066	core.group.002	Windows · 任务列表	tasklist.exe /V	Windows：显示进程、PID、会话、内存和窗口标题；输出可能较长。
+@command	core.command.0067	core.group.002	Windows · 高 CPU 进程	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-Process | Sort-Object CPU -Descending | Select-Object -First 30 Id,ProcessName,CPU,WorkingSet,StartTime"	Windows/PowerShell：按进程启动以来累计 CPU 时间显示前 30 项，并非瞬时 CPU 排名。
+@command	core.command.0068	core.group.002	Windows · 高内存进程	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-Process | Sort-Object WorkingSet64 -Descending | Select-Object -First 30 Id,ProcessName,@{N='WorkingSetMB';E={[math]::Round($_.WorkingSet64/1MB,1)}},CPU"	Windows/PowerShell：按工作集内存显示前 30 个进程。
+@command	core.command.0069	core.group.002	Windows · 查找进程	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-Process -Name '{{input,进程名,default=explorer}}' | Select-Object Id,ProcessName,Path,StartTime"	Windows/PowerShell：按进程名查找进程；名称通常不含 .exe，无匹配时返回错误。
+@command	core.command.0070	core.group.002	Windows · 进程命令行	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-CimInstance Win32_Process | Select-Object ProcessId,ParentProcessId,Name,ExecutablePath,CommandLine"	Windows/PowerShell：显示可访问进程的父 PID、路径和命令行；部分字段需要更高权限。
+@command	core.command.0071	core.group.002	Windows · 远程打开文件	openfiles.exe /query /fo TABLE /v	Windows：显示通过共享目录远程打开的文件；通常需要管理员权限，本地文件仅在预先启用对象列表维护时可见。
+@command	core.command.0072	core.group.002	Windows · 服务状态	sc.exe queryex "{{input,服务名,default=sshd}}"	Windows：按服务名称显示状态、PID 和退出码，不启动或停止服务。
+@command	core.command.0073	core.group.002	Windows · 服务配置	sc.exe qc "{{input,服务名,default=sshd}}"	Windows：显示服务启动类型、运行账户、依赖项和可执行路径。
+@command	core.command.0074	core.group.002	Windows · 服务详情	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-CimInstance Win32_Service -Filter \\"Name='{{input,服务名,default=sshd}}'\\" | Format-List Name,DisplayName,State,StartMode,StartName,PathName,ProcessId,ExitCode"	Windows/PowerShell：显示指定服务的状态、启动模式、账户、路径和 PID。
+@command	core.command.0075	core.group.002	Windows · 自动服务异常	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-CimInstance Win32_Service | Where-Object {$_.StartMode -eq 'Auto' -and $_.State -ne 'Running'} | Select-Object Name,DisplayName,State,StartMode,ExitCode"	Windows/PowerShell：列出配置为自动启动但当前未运行的服务；延迟启动或触发启动服务可能是正常状态。
+@command	core.command.0076	core.group.002	Windows · 系统错误事件	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-WinEvent -FilterHashtable @{LogName='System';Level=1,2,3;StartTime=(Get-Date).AddHours(-1)} -ErrorAction SilentlyContinue | Select-Object -First 100 TimeCreated,Id,LevelDisplayName,ProviderName,Message | Format-List"	Windows/PowerShell：显示最近 1 小时系统日志中的严重、错误和警告事件，最多 100 条。
+@command	core.command.0077	core.group.002	Windows · 应用错误事件	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-WinEvent -FilterHashtable @{LogName='Application';Level=1,2,3;StartTime=(Get-Date).AddHours(-1)} -ErrorAction SilentlyContinue | Select-Object -First 100 TimeCreated,Id,LevelDisplayName,ProviderName,Message | Format-List"	Windows/PowerShell：显示最近 1 小时应用日志中的严重、错误和警告事件，最多 100 条。
+@command	core.command.0078	core.group.002	Windows · 指定提供程序事件	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-WinEvent -FilterHashtable @{LogName='System';ProviderName='{{input,事件提供程序,default=Service Control Manager}}';StartTime=(Get-Date).AddHours(-24)} -ErrorAction SilentlyContinue | Select-Object -First 100 TimeCreated,Id,LevelDisplayName,Message | Format-List"	Windows/PowerShell：显示指定系统事件提供程序最近 24 小时的事件，最多 100 条。
+@command	core.command.0079	core.group.002	Windows · 计划任务	schtasks.exe /query /fo LIST /v	Windows：只读列出计划任务、运行账户、触发器和最近结果；输出可能很长。
+@command	core.command.0080	core.group.002	Windows · 目录列表	cmd.exe /d /c dir /a "{{input,目录路径,default=C:\\\\Windows\\\\Temp}}"	Windows：列出指定目录的普通项和隐藏/系统项，不递归。
+@command	core.command.0081	core.group.002	Windows · 目录占用	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "$p='{{input,目录路径,default=C:\\\\Windows\\\\Temp}}'; $m=Get-ChildItem -LiteralPath $p -File -Recurse -Force -ErrorAction SilentlyContinue | Measure-Object Length -Sum; [pscustomobject]@{Path=$p;Files=$m.Count;SizeGB=[math]::Round($m.Sum/1GB,3)} | Format-List"	Windows/PowerShell：递归统计指定目录的文件数和总大小；大型目录可能耗时且会跳过无权访问的项。
+@command	core.command.0082	core.group.002	Windows · 大文件查找	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-ChildItem -LiteralPath '{{input,目录路径,default=C:\\\\}}' -File -Recurse -Force -ErrorAction SilentlyContinue | Where-Object {$_.Length -ge {{input,最小MB,default=100}}MB} | Sort-Object Length -Descending | Select-Object -First 50 FullName,@{N='SizeMB';E={[math]::Round($_.Length/1MB,1)}}"	Windows/PowerShell：递归显示最大的 50 个超限文件；扫描整个卷可能耗时并产生较大 I/O。
+@command	core.command.0083	core.group.002	Windows · 文件权限	icacls.exe "{{input,文件或目录路径,default=C:\\\\Windows\\\\Temp}}"	Windows：显示指定文件或目录的 NTFS 访问控制列表，不修改权限。
+@command	core.command.0084	core.group.002	Windows · 文件系统卷	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-Volume | Format-Table DriveLetter,FileSystemLabel,FileSystem,DriveType,HealthStatus,OperationalStatus,SizeRemaining,Size -Auto"	Windows/PowerShell：显示卷标、文件系统、类型、健康状态、剩余空间和总容量。
+@command	core.command.0085	core.group.002	Windows · 物理磁盘	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-PhysicalDisk | Format-Table FriendlyName,MediaType,BusType,HealthStatus,OperationalStatus,Size -Auto"	Windows/PowerShell：显示 Storage 模块可识别的物理磁盘及健康状态；旧系统可能不支持。
+@command	core.command.0086	core.group.002	Windows · 磁盘分区	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-Disk | Format-Table Number,FriendlyName,PartitionStyle,OperationalStatus,HealthStatus,Size -Auto; Get-Partition | Format-Table DiskNumber,PartitionNumber,DriveLetter,Type,Size -Auto"	Windows/PowerShell：显示磁盘和分区布局，不修改分区。
+@command	core.command.0087	core.group.002	Windows · 网络配置	ipconfig.exe /all	Windows：显示网卡地址、网关、DNS、DHCP 和租约信息。
+@command	core.command.0088	core.group.002	Windows · 网络适配器	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-NetAdapter | Sort-Object ifIndex | Format-Table ifIndex,Name,InterfaceDescription,Status,LinkSpeed,MacAddress -Auto"	Windows/PowerShell：显示网络适配器状态、链路速率和 MAC 地址；旧系统可能不支持 NetTCPIP 模块。
+@command	core.command.0089	core.group.002	Windows · 路由表	route.exe print	Windows：显示 IPv4/IPv6 路由表和接口列表。
+@command	core.command.0090	core.group.002	Windows · 默认路由	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-NetRoute -DestinationPrefix '0.0.0.0/0','::/0' -ErrorAction SilentlyContinue | Sort-Object RouteMetric | Format-Table ifIndex,DestinationPrefix,NextHop,RouteMetric,InterfaceMetric -Auto"	Windows/PowerShell：显示 IPv4/IPv6 默认路由并按路由度量排序。
+@command	core.command.0091	core.group.002	Windows · ARP 缓存	arp.exe -a	Windows：显示 IPv4 ARP 缓存；IPv6 邻居请使用邻居缓存模板。
+@command	core.command.0092	core.group.002	Windows · 邻居缓存	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-NetNeighbor | Format-Table ifIndex,IPAddress,LinkLayerAddress,State -Auto"	Windows/PowerShell：显示 IPv4/IPv6 邻居缓存；旧系统可能不支持 NetTCPIP 模块。
+@command	core.command.0093	core.group.002	Windows · 网络连接	netstat.exe -ano	Windows：显示 TCP/UDP 端点、连接状态和 PID；不会解析进程名称。
+@command	core.command.0094	core.group.002	Windows · TCP 监听端口	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-NetTCPConnection -State Listen | Sort-Object LocalPort | Select-Object LocalAddress,LocalPort,OwningProcess,@{N='ProcessName';E={(Get-Process -Id $_.OwningProcess -ErrorAction SilentlyContinue).ProcessName}}"	Windows/PowerShell：显示 TCP 监听地址、端口、PID 和可解析的进程名。
+@command	core.command.0095	core.group.002	Windows · 已建立 TCP	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-NetTCPConnection -State Established | Sort-Object RemoteAddress,RemotePort | Select-Object LocalAddress,LocalPort,RemoteAddress,RemotePort,OwningProcess"	Windows/PowerShell：显示已建立的 TCP 连接及所属 PID。
+@command	core.command.0096	core.group.002	Windows · DNS 服务器	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-DnsClientServerAddress | Format-Table InterfaceAlias,AddressFamily,ServerAddresses -Auto"	Windows/PowerShell：显示各网络接口配置的 IPv4/IPv6 DNS 服务器。
+@command	core.command.0097	core.group.002	Windows · DNS 缓存	ipconfig.exe /displaydns	Windows：显示 Windows DNS 客户端缓存；输出可能很长。
+@command	core.command.0098	core.group.002	Windows · DNS 查询	nslookup.exe "{{input,域名,default=example.com}}"	Windows：使用系统配置的 DNS 服务器解析指定名称。
+@command	core.command.0099	core.group.002	Windows · Ping 目标	ping.exe -n 4 -w 3000 "{{input,目标主机,default=1.1.1.1}}"	Windows：向目标发送 4 个 ICMP 探测包，每个响应最多等待 3 秒；防火墙可能丢弃 ICMP。
+@command	core.command.0100	core.group.002	Windows · 路由追踪	tracert.exe -d -w 3000 "{{input,目标主机,default=1.1.1.1}}"	Windows：不反向解析名称地跟踪到目标的路由，每跳等待 3 秒；部分节点可能不响应。
+@command	core.command.0101	core.group.002	Windows · 测试 TCP 端口	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Test-NetConnection -ComputerName '{{input,目标主机,default=1.1.1.1}}' -Port {{input,目标端口,default=22}} -InformationLevel Detailed"	Windows/PowerShell：测试指定 TCP 端口并显示名称解析、源地址和建连结果。
+@command	core.command.0102	core.group.002	Windows · HTTP 响应头	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "$r=Invoke-WebRequest -Uri '{{input,URL,default=https://example.com}}' -Method Head -TimeoutSec 10 -UseBasicParsing; $r.StatusCode; $r.Headers"	Windows/PowerShell：请求 HTTP HEAD 并显示状态码和响应头，10 秒超时；证书校验保持启用。
+@command	core.command.0103	core.group.002	Windows · 防火墙配置文件	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-NetFirewallProfile | Format-Table Name,Enabled,DefaultInboundAction,DefaultOutboundAction,AllowInboundRules,LogFileName -Auto"	Windows/PowerShell：显示域、专用和公用防火墙配置文件的状态与默认动作。
+@command	core.command.0104	core.group.002	Windows · 防火墙规则	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-NetFirewallRule -Enabled True | Select-Object -First 200 DisplayName,Direction,Action,Profile,PrimaryStatus"	Windows/PowerShell：显示前 200 条已启用防火墙规则摘要；不展开端口和地址过滤器。
+@command	core.command.0105	core.group.002	Windows · Defender 状态	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-MpComputerStatus | Format-List AMServiceEnabled,AntivirusEnabled,RealTimeProtectionEnabled,AntivirusSignatureVersion,AntivirusSignatureLastUpdated,QuickScanAge,FullScanAge"	Windows/PowerShell：显示 Microsoft Defender 引擎、防护和签名状态；未安装 Defender 时不可用。
+@command	core.command.0106	core.group.002	Windows · 本地用户	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-LocalUser | Format-Table Name,Enabled,LastLogon,PasswordExpires,UserMayChangePassword -Auto"	Windows/PowerShell：显示本地用户状态；域控制器或旧 PowerShell 可能不支持 LocalAccounts 模块。
+@command	core.command.0107	core.group.002	Windows · 本地组	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-LocalGroup | Format-Table Name,Description -Auto"	Windows/PowerShell：显示本地安全组；域控制器或旧 PowerShell 可能不支持 LocalAccounts 模块。
+@command	core.command.0108	core.group.002	Windows · 共享目录	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-SmbShare | Format-Table Name,Path,Description,CurrentUsers,Special -Auto"	Windows/PowerShell：显示 SMB 共享及当前用户数；旧系统可能不支持 SmbShare 模块。
+@command	core.command.0109	core.group.002	Windows · OpenSSH 状态	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-WindowsCapability -Online | Where-Object {$_.Name -like 'OpenSSH*'} | Select-Object Name,State; Get-Service -Name sshd,ssh-agent -ErrorAction SilentlyContinue"	Windows/PowerShell：显示 Windows OpenSSH 可选功能及 sshd/ssh-agent 服务状态；查询在线映像可能需要管理员权限。
+@command	core.command.0110	core.group.002	Windows · 证书到期检查	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-ChildItem Cert:\\\\LocalMachine\\\\My | Sort-Object NotAfter | Select-Object Subject,Thumbprint,NotBefore,NotAfter,@{N='DaysLeft';E={[math]::Floor(($_.NotAfter-(Get-Date)).TotalDays)}}"	Windows/PowerShell：显示本机个人证书及剩余天数；读取本机证书存储可能需要权限。
+@command	core.command.0111	core.group.002	Windows · Java 版本	java.exe -version	Windows：显示当前 PATH 中 Java 的运行时版本；版本信息通常写入标准错误。
+@command	core.command.0112	core.group.002	Windows · Docker 容器	docker.exe ps --all	Windows/Docker：显示全部容器及状态；需要 Docker CLI 和可访问的 Docker 引擎。
+@group	core.group.003	macOS常用	BLUE
+@command	core.command.0113	core.group.003	Mac · 系统版本	sw_vers; printf '\\\\n'; uname -a	macOS：显示产品版本、构建号、内核和处理器架构。
+@command	core.command.0114	core.group.003	Mac · 主机信息	scutil --get ComputerName; scutil --get LocalHostName; hostname	macOS：依次显示用户可见电脑名称、本地主机名和当前主机名。
+@command	core.command.0115	core.group.003	Mac · 当前身份	whoami; id	macOS：显示当前用户及 UID、主组和附属组。
+@command	core.command.0116	core.group.003	Mac · 在线时长	uptime	macOS：显示系统运行时长、当前用户数和 1/5/15 分钟负载均值。
+@command	core.command.0117	core.group.003	Mac · 当前登录用户	w	macOS：显示当前登录会话、来源、空闲时间和前台活动。
+@command	core.command.0118	core.group.003	Mac · 最近登录	last -25	macOS：从登录历史显示最近 25 条记录；结果取决于系统保留的数据。
+@command	core.command.0119	core.group.003	Mac · 最近重启	last reboot -10	macOS：从登录历史显示最近 10 次启动记录。
+@command	core.command.0120	core.group.003	Mac · 时间与时区	date; printf '\\\\nTime zone source: '; readlink /etc/localtime	macOS：显示当前日期时间和时区数据库链接；不会修改时间设置。
+@command	core.command.0121	core.group.003	Mac · 硬件摘要	system_profiler SPHardwareDataType	macOS：显示 Mac 型号、芯片/处理器、核心、内存和硬件标识摘要。
+@command	core.command.0122	core.group.003	Mac · CPU 信息	sysctl -n machdep.cpu.brand_string 2>/dev/null || sysctl -n hw.model; sysctl hw.physicalcpu hw.logicalcpu	macOS：显示 Intel 处理器型号或硬件型号，以及物理和逻辑核心数。
+@command	core.command.0123	core.group.003	Mac · 内存页统计	vm_stat	macOS：显示虚拟内存页计数；数值需结合页面大小换算，不是直接的字节数。
+@command	core.command.0124	core.group.003	Mac · 内存压力	memory_pressure	macOS：显示系统内存压力、空闲比例和交换活动摘要。
+@command	core.command.0125	core.group.003	Mac · 资源快照	top -l 1 -n 20 -stats pid,command,cpu,mem,threads,state,time	macOS：采集一次系统负载、CPU、内存和前 20 个进程快照。
+@command	core.command.0126	core.group.003	Mac · 全部进程	ps -axo user,pid,ppid,stat,%cpu,%mem,lstart,time,command	macOS：显示全部进程的用户、PID、父 PID、状态、资源比例、启动时间和命令。
+@command	core.command.0127	core.group.003	Mac · 高占用进程	ps -arcwwwxo pid,ppid,user,state,%cpu,%mem,etime,command | head -n 31	macOS：按 CPU 使用率显示前 30 个进程；%CPU 是 ps 采样口径。
+@command	core.command.0128	core.group.003	Mac · 查找进程	pgrep -ifl "{{input,进程名称或正则,default=sshd}}"	macOS：不区分大小写地按名称或正则匹配进程，并显示 PID 与命令名；无匹配时退出码为 1。
+@command	core.command.0129	core.group.003	Mac · 进程关系	ps -axo pid,ppid,pgid,sess,user,state,etime,command	macOS：显示进程、父进程、进程组和会话关系；输出不是缩进树。
+@command	core.command.0130	core.group.003	Mac · 进程打开文件	lsof -nP -p "{{input,进程PID,default=1}}"	macOS：显示指定进程打开的文件和套接字；查看其他用户进程可能需要管理员权限。
+@command	core.command.0131	core.group.003	Mac · 文件系统空间	df -h	macOS：以易读单位显示已挂载文件系统的容量和空间使用率。
+@command	core.command.0132	core.group.003	Mac · 文件系统 inode	df -i	macOS：显示 inode 使用情况；APFS 的 inode 行为与传统固定 inode 文件系统不同。
+@command	core.command.0133	core.group.003	Mac · 磁盘列表	diskutil list	macOS：显示物理磁盘、容器、卷和分区布局，不修改磁盘。
+@command	core.command.0134	core.group.003	Mac · 启动卷信息	diskutil info /	macOS：显示当前启动卷的文件系统、设备、容量、加密和可写状态。
+@command	core.command.0135	core.group.003	Mac · APFS 信息	diskutil apfs list	macOS：显示 APFS 容器、物理存储和卷关系；非 APFS 系统可能无结果。
+@command	core.command.0136	core.group.003	Mac · 挂载信息	mount	macOS：显示当前挂载点、文件系统类型和挂载选项。
+@command	core.command.0137	core.group.003	Mac · 查看目录	ls -lah "{{input,目录路径,default=/var/log}}"	macOS：列出指定目录的普通项、隐藏项、权限、所有者、大小和时间。
+@command	core.command.0138	core.group.003	Mac · 目录占用	du -sh "{{input,目录路径,default=/var/log}}"	macOS：汇总指定目录占用；大型目录可能耗时，并可能因隐私或权限限制跳过内容。
+@command	core.command.0139	core.group.003	Mac · 一级目录占用	du -hd 1 "{{input,目录路径,default=/var}}" 2>/dev/null | sort -h	macOS：按大小列出指定目录及其直接子目录；跨卷内容也会被统计，大型目录可能耗时。
+@command	core.command.0140	core.group.003	Mac · 大文件查找	find -x "{{input,目录路径,default=/var}}" -type f -size +"{{input,最小大小,default=100M}}" -print 2>/dev/null | head -n 50	macOS：在同一文件系统内显示前 50 个超限文件；顺序不是按大小排序，扫描可能耗时。
+@command	core.command.0141	core.group.003	Mac · 路径占用进程	lsof -nP +D "{{input,目录路径,default=/var/log}}"	macOS：递归查找打开指定目录内文件的进程；大型目录开销较大，可能需要管理员权限。
+@command	core.command.0142	core.group.003	Mac · 系统错误日志	log show --last 1h --style compact --predicate '(messageType == error) OR (messageType == fault)' | tail -n 200	macOS：显示最近 1 小时最多末尾 200 行错误和故障级统一日志；查询可能耗时。
+@command	core.command.0143	core.group.003	Mac · 指定进程日志	log show --last 1h --style compact --predicate 'process == "{{input,进程名,default=sshd}}"' | tail -n 200	macOS：显示指定进程最近 1 小时最多末尾 200 行统一日志；日志隐私设置可能隐藏内容。
+@command	core.command.0144	core.group.003	Mac · 本次启动内核日志	log show --last boot --style compact --predicate 'process == "kernel"' | tail -n 200	macOS：显示本次启动最多末尾 200 行内核统一日志；查询可能耗时。
+@command	core.command.0145	core.group.003	Mac · Launchd 任务	launchctl list	macOS/launchd：显示当前用户引导域可见的任务、PID 和最近退出状态。
+@command	core.command.0146	core.group.003	Mac · Launchd 服务详情	launchctl print system/{{input,服务标签,default=com.openssh.sshd}}	macOS/launchd：显示系统域中指定服务的配置与运行状态；必须输入准确的 launchd 标签。
+@command	core.command.0147	core.group.003	Mac · 网络硬件端口	networksetup -listallhardwareports	macOS：显示硬件端口、BSD 接口名和 MAC 地址。
+@command	core.command.0148	core.group.003	Mac · 网络接口	ifconfig -a	macOS：显示全部网络接口、状态、地址和链路参数；输出包含较多低层信息。
+@command	core.command.0149	core.group.003	Mac · 默认路由	route -n get default	macOS：显示 IPv4 默认路由、网关和出口接口；无默认路由时返回错误。
+@command	core.command.0150	core.group.003	Mac · 路由表	netstat -nr -f inet; printf '\\\\n--- IPv6 ---\\\\n'; netstat -nr -f inet6	macOS：显示 IPv4 和 IPv6 路由表，不执行名称解析。
+@command	core.command.0151	core.group.003	Mac · TCP 监听端口	lsof -nP -iTCP -sTCP:LISTEN	macOS：显示当前权限可见的 TCP 监听端口及进程；不包含 UDP。
+@command	core.command.0152	core.group.003	Mac · UDP 端点	lsof -nP -iUDP	macOS：显示当前权限可见的 UDP 套接字及进程；UDP 没有 TCP 式监听状态。
+@command	core.command.0153	core.group.003	Mac · 已建立 TCP	lsof -nP -iTCP -sTCP:ESTABLISHED	macOS：显示当前权限可见的已建立 TCP 连接及进程。
+@command	core.command.0154	core.group.003	Mac · 邻居缓存	arp -an; printf '\\\\n--- IPv6 ---\\\\n'; ndp -an	macOS：显示 IPv4 ARP 与 IPv6 NDP 邻居缓存。
+@command	core.command.0155	core.group.003	Mac · DNS 状态	scutil --dns	macOS：显示系统实际解析器及逐域、逐接口 DNS 选择，比只读某个网络服务更完整。
+@command	core.command.0156	core.group.003	Mac · 代理状态	scutil --proxy	macOS：显示系统代理、自动配置和例外列表；应用仍可能使用自己的代理设置。
+@command	core.command.0157	core.group.003	Mac · DNS 查询	dig +short "{{input,域名,default=example.com}}"	macOS：使用系统自带 dig 查询指定域名并输出简要结果。
+@command	core.command.0158	core.group.003	Mac · Ping 目标	ping -c 4 -W 3000 "{{input,目标主机,default=1.1.1.1}}"	macOS：向目标发送 4 个 ICMP 探测包；-W 的单位在 macOS 中为毫秒，防火墙可能丢弃 ICMP。
+@command	core.command.0159	core.group.003	Mac · 路由追踪	traceroute -n -w 3 "{{input,目标主机,default=1.1.1.1}}"	macOS：不反向解析名称地跟踪到目标的网络路径，每次探测等待 3 秒。
+@command	core.command.0160	core.group.003	Mac · 测试 TCP 端口	nc -G 5 -vz "{{input,目标主机,default=1.1.1.1}}" "{{input,目标端口,default=22}}"	macOS：使用系统 netcat 测试 TCP 建连，5 秒连接超时。
+@command	core.command.0161	core.group.003	Mac · HTTP 响应头	curl -fsSIL --max-time 10 "{{input,URL,default=https://example.com}}"	macOS：跟随重定向并显示 HTTP 响应头，10 秒超时；证书校验保持启用。
+@command	core.command.0162	core.group.003	Mac · 应用防火墙	/usr/libexec/ApplicationFirewall/socketfilterfw --getglobalstate; /usr/libexec/ApplicationFirewall/socketfilterfw --getstealthmode	macOS：显示应用防火墙和隐身模式状态，不修改设置。
+@command	core.command.0163	core.group.003	Mac · PF 防火墙	pfctl -s info; pfctl -sr	macOS/PF：只读显示 PF 状态和过滤规则；通常需要管理员权限才能读取完整结果。
+@command	core.command.0164	core.group.003	Mac · 系统完整性保护	csrutil status	macOS：显示 System Integrity Protection 状态；不会修改恢复环境设置。
+@command	core.command.0165	core.group.003	Mac · FileVault 状态	fdesetup status	macOS：显示启动卷 FileVault 加密状态；某些详情可能需要管理员权限。
+@command	core.command.0166	core.group.003	Mac · Gatekeeper 状态	spctl --status	macOS：显示 Gatekeeper 全局评估状态，不修改安全策略。
+@command	core.command.0167	core.group.003	Mac · 可用系统更新	softwareupdate --list	macOS：查询可用系统更新但不安装；需要网络，执行可能耗时。
+@command	core.command.0168	core.group.003	Mac · 已安装软件包	pkgutil --pkgs | sort	macOS：列出安装器收据中的软件包标识；不等同于完整应用清单。
+@command	core.command.0169	core.group.003	Mac · Homebrew 状态	HOMEBREW_NO_AUTO_UPDATE=1 brew outdated --verbose	macOS/Homebrew：使用现有元数据显示可升级的 formula 和 cask；需要 Homebrew，不自动刷新仓库元数据。
+@command	core.command.0170	core.group.003	Mac · 电源与电池	pmset -g batt; printf '\\\\n'; pmset -g custom	macOS：显示电池/电源来源和各供电模式的电源管理配置。
+@command	core.command.0171	core.group.003	Mac · Time Machine 状态	tmutil status	macOS：显示当前 Time Machine 备份状态；未配置或未运行备份时会显示未运行。
+@command	core.command.0172	core.group.003	Mac · Java 版本	java -version	macOS：显示当前 PATH 中 Java 的运行时版本；未安装可用 JDK/JRE 时系统可能显示安装提示。
+@command	core.command.0173	core.group.003	Mac · Docker 容器	docker ps --all	macOS/Docker：显示全部容器及状态；需要 Docker CLI 且 Docker Desktop 或其他引擎正在运行。

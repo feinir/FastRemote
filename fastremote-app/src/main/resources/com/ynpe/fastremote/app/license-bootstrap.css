@@ -1,0 +1,25 @@
+.license-page { -fx-background-color: -fr-surface; -fx-min-width: 0; -fx-min-height: 0; }
+.license-scroll, .license-scroll > .viewport, .license-content, .license-actions {
+    -fx-background-color: -fr-surface;
+}
+.license-scroll { -fx-border-color: transparent; -fx-padding: 0; }
+.license-content { -fx-min-width: 0; }
+.license-actions { -fx-border-color: -fr-border transparent transparent transparent; }
+.license-title { -fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: -fr-text; }
+.license-subtitle { -fx-font-size: 13px; -fx-text-fill: -fr-text-muted; }
+.license-section-title { -fx-font-weight: bold; -fx-text-fill: -fr-text; }
+.license-status {
+    -fx-text-fill: -fr-text;
+    -fx-max-width: infinity;
+    -fx-padding: 9px 11px;
+    -fx-background-color: rgba(53, 111, 228, 0.09);
+    -fx-background-radius: 6px;
+    -fx-border-color: rgba(53, 111, 228, 0.32);
+    -fx-border-radius: 6px;
+}
+.license-status-error {
+    -fx-text-fill: #a51d2b;
+    -fx-background-color: rgba(190, 45, 55, 0.12);
+    -fx-border-color: rgba(190, 45, 55, 0.45);
+}
+.button { -fx-cursor: hand; }

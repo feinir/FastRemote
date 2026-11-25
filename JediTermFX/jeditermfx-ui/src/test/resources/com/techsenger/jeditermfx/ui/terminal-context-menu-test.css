@@ -1,0 +1,7 @@
+.context-menu.application-context-menu.terminal-context-dark {
+    -fx-background-color: #171c23;
+}
+
+.context-menu.application-context-menu.terminal-context-light {
+    -fx-background-color: #ffffff;
+}

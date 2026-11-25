@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" spacing="0"
+      styleClass="sftp-file-browser,local-file-workspace">
+    <children>
+        <HBox alignment="CENTER_LEFT" spacing="8" styleClass="session-action-bar">
+            <children>
+                <Label text="%localFiles.title" styleClass="sftp-pane-label" />
+                <Separator orientation="VERTICAL" />
+                <Button fx:id="upButton" text="%localFiles.up" />
+                <TextField fx:id="pathField" HBox.hgrow="ALWAYS" />
+                <Button fx:id="refreshButton" text="%localFiles.refresh" />
+                <Button fx:id="favoritesButton" text="%localFiles.favorites" />
+                <Button fx:id="terminalButton" text="%localFiles.terminal" />
+            </children>
+        </HBox>
+        <StackPane fx:id="contentHost" VBox.vgrow="ALWAYS" />
+        <HBox alignment="CENTER_LEFT" spacing="8" styleClass="sftp-directory-statistics">
+            <children>
+                <Label fx:id="statisticsLabel" HBox.hgrow="ALWAYS" />
+                <ProgressIndicator fx:id="progress" maxHeight="18" maxWidth="18" visible="false" managed="false" />
+            </children>
+        </HBox>
+    </children>
+</VBox>

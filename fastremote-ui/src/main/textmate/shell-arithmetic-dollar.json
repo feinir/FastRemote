@@ -1,0 +1,1 @@
+{"begin":"\\$\\(\\(","end":"\\)\\)","name":"meta.arithmetic.shell","beginCaptures":{"0":{"name":"punctuation.section.arithmetic.double.shell"}},"endCaptures":{"0":{"name":"punctuation.section.arithmetic.double.shell"}},"patterns":[{"include":"#math"},{"include":"#string"}]}

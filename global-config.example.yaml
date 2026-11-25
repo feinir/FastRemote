@@ -1,0 +1,163 @@
+# FastRemote 全局配置示例（Schema v1）。
+# 仅用于说明字段；BASE64_*、UUID 和时间均为占位值，不能作为可解锁保险库直接使用。
+# 实际文件由程序原子写入，请不要在 FastRemote 运行时编辑。
+
+schemaVersion: 2 # v2 将 API/MCP 令牌与 SSH 凭证分区保存。
+
+settings: # 不属于某台主机的全局设置。
+  masterPasswordConfigured: true # 是否已经建立主密码和加密保险库。
+  rememberUnlock: false # 是否保存派生后的解锁材料；开启会降低配置文件泄漏后的安全性。
+  workspace: # 主窗口工作区布局。
+    interfaceLanguage: system # 界面语言；system/en/zh-CN/zh-TW，修改后重启生效。
+    leftDockVisible: true # 启动时是否展开左侧功能区。
+    rightDockVisible: false # 启动时是否展开右侧功能区。
+    bottomDockVisible: false # 兼容保留；终端概览悬浮后不再启动自动展开。
+    leftDockWidth: 245.0 # 左侧功能区最后宽度，单位为逻辑像素，必须大于 0。
+    rightDockWidth: 245.0 # 右侧功能区最后宽度，单位为逻辑像素，必须大于 0。
+    leftDockDisplayMode: EMBEDDED # 左侧展开方式；EMBEDDED 内嵌，FLOATING 悬浮。
+    rightDockDisplayMode: FLOATING # 右侧展开方式；默认悬浮且启动不自动展开。
+    terminalActivityHeight: 100.0 # 终端服务器概览悬浮层最后高度，单位为逻辑像素。
+    sftpActivityHeight: 180.0 # SFTP 传输活动区最后高度，单位为逻辑像素。
+    hostLibraryDock: LEFT # 主机库停靠侧；只能是 LEFT 或 RIGHT。
+    quickConnectDock: LEFT # 快速连接停靠侧；只能是 LEFT 或 RIGHT。
+    snippetsDock: RIGHT # 命令库停靠侧；只能是 LEFT 或 RIGHT，默认 RIGHT。
+    variableLibraryDock: RIGHT # 变量库停靠侧；只能是 LEFT 或 RIGHT，默认 RIGHT。
+    credentialVaultDock: LEFT # 凭证库停靠侧；只能是 LEFT 或 RIGHT。
+    aiAssistantDock: RIGHT # 全局 AI 助手停靠侧；只能是 LEFT 或 RIGHT，默认 RIGHT。
+    diagnosticLogDock: RIGHT # 诊断日志停靠侧；只能是 LEFT 或 RIGHT，默认 RIGHT。
+    leftToolOrder: [QUICK_CONNECT, HOST_LIBRARY, CREDENTIAL_VAULT] # 左侧图标同侧拖动排序。
+    rightToolOrder: [SNIPPETS, VARIABLE_LIBRARY, AI_ASSISTANT, DIAGNOSTIC_LOG] # 右侧图标同侧拖动排序。
+    collapsedHostGroups: [] # 各库当前收起的分组键；变量分组使用 variable: 前缀。
+    hostTabTitle: [NAME] # 一级连接标签标题组成；可选 NAME、USER、HOST、PORT，多项按固定顺序用连字符连接。
+    showSftpDirectoryTree: true # SFTP 本地和远程文件面板是否显示目录树；关闭后只显示当前目录列表。
+    openLocalTerminalOnStartup: false # 启动时是否自动打开一个本地终端标签。
+    closeTabOnDoubleClick: true # 双击主标签时是否关闭该标签；双击标签栏空白仍新建本地终端。
+    restoreWindowBounds: true # 退出时保存并在下次启动恢复主窗口位置和大小。
+    commandPalette: # 命令面板数据源、本地化别名和实体操作。
+      searchHosts: true # 是否搜索主机库中的主机。
+      searchCommands: true # 是否搜索命令库中的命令。
+      searchVariables: false # 是否搜索变量库；默认关闭以控制结果量。
+      pinyinSearch: false # 是否加入中文界面的拼音别名；英文别名始终可用。
+      showCommandSend: true # 命令结果是否显示“发送命令”。
+      showCommandPaste: true # 命令结果是否显示“仅粘贴”。
+      showCommandEdit: false # 命令结果是否显示“编辑命令”；默认关闭。
+      showHostConnect: true # 主机结果是否显示“连接终端”。
+      showHostSftp: false # 主机结果是否显示“打开 SFTP”；默认关闭。
+      showHostEdit: false # 主机结果是否显示“编辑主机”；默认关闭。
+    # windowBounds 由程序退出或窗口移动/缩放后自动写入，首次启动时省略。
+  terminal: # 全局终端显示偏好；保存后应用到当前和后续终端。
+    colorScheme: FAST_DARK # FAST_DARK、SOLARIZED_DARK、FAST_LIGHT 或 CUSTOM；CUSTOM 使用下方导入配色。
+    fontFamily: Monaco # 终端 ASCII 主字体；不可用时回退到应用内置 HarmonyOS Sans SC。
+    fontSize: 14 # 终端字号，范围 9 至 32。
+    cursorShape: VERTICAL_BAR # BLOCK、VERTICAL_BAR 或 UNDERLINE。
+    cursorBlink: true # 是否让默认终端光标闪烁。
+    terminalType: xterm-256color # SSH PTY 与本地 TERM；可选 xterm-256color、xterm、vt100、ansi、linux。
+    initialColumns: 140 # 新终端布局完成前使用的初始列数，范围 20 至 500。
+    initialRows: 32 # 新终端布局完成前使用的初始行数，范围 5 至 200。
+    openHyperlinksOnClick: true # 单击终端链接是否直接打开；关闭后需按平台快捷键配合点击。
+    remoteProbe:
+      probeServerInformation: true # 连接后是否通过独立无 PTY exec 通道主动探测服务器信息。
+      linuxSupplement: '' # Linux 基础探测后的补充 Shell 命令；一行一条，留空不执行。
+      macosSupplement: '' # macOS 补充 Shell 命令；一行一条。
+      freebsdSupplement: '' # FreeBSD 补充 Shell 命令；一行一条。
+      windowsSupplement: '' # Windows 补充 PowerShell 命令；一行一条。
+    matrixEditorVersion: 2 # 内部兼容标记，区分旧版错误写入的 32×32；请勿手工修改。
+    # customColorPalette 由配置中心从 iTerm2 .itermcolors 或 Windows Terminal JSON 导入；未导入时省略。
+  connection: # 后续新建 SSH/SFTP 连接使用的网络参数和终端空闲策略。
+    connectTimeoutSeconds: 20 # TCP 连接及 SSH 密钥交换超时，范围 3 至 120 秒。
+    authenticationTimeoutSeconds: 30 # SSH 认证超时，范围 3 至 180 秒。
+    keepAliveIntervalSeconds: 30 # SSH 协议保活间隔，范围 5 至 600 秒；连续两次无响应即断开，默认约 60 秒。
+    disconnectIdleTerminal: false # 是否在交互终端长时间没有输入和远端输出时自动断开。
+    terminalIdleTimeoutMinutes: 30 # 空闲断开阈值，范围 1 至 1440 分钟；开关关闭时保留但不执行。
+  sftp: # 全局 SFTP 浏览、队列与路径收藏设置。
+    showHiddenFiles: true # 是否显示本地和远程隐藏文件；默认显示。
+    concurrentTransfers: 4 # 每个 SFTP 会话的最大并发任务数，范围 1 至 16。
+    globalBookmarks: # 所有主机都可使用的有序路径收藏；菜单分别最多显示前 10 项。
+      local: [/Users/example/Downloads]
+      remote: [/var/log]
+    hostBookmarks: # 按保存主机 UUID；快速连接按 quick:user@host:port 隔离。
+      00000000-0000-0000-0000-000000000003:
+        local: [/Users/example/projects]
+        remote: [/srv/www, /etc/nginx]
+
+ai: # AI Provider、两套自动化权限、本地访问范围和本机 MCP；不保存明文 API Key/Token。
+  providers:
+    - id: local-ollama
+      name: 本地 Ollama
+      type: OLLAMA # OPENAI_RESPONSES、OPENAI_COMPATIBLE 或 OLLAMA。
+      baseUrl: http://127.0.0.1:11434/v1
+      model: '' # 可留空；FastRemote 会从 API 主动探测模型并在助手中提供选择。
+      apiKeySecretId: null # 有 API Key 时引用下方 type=TOKEN 的加密 SecretId。
+      allowInsecureHttp: false # 非本机 HTTP 必须显式开启；优先使用 HTTPS。
+  selectedProviderId: local-ollama
+  builtInPermissions:
+    READ_HOST_METADATA: ALLOW
+    OPEN_HOST: ASK
+    MANAGE_WORKSPACE: ASK
+    IMPORT_EXPORT: ASK
+    READ_LOCAL: ASK
+    WRITE_LOCAL: ASK
+    MUTATE_LOCAL: ASK
+    LIST_REMOTE: ASK
+    RUN_COMMAND: ASK
+    UPLOAD: ASK
+    DOWNLOAD: ASK
+    MUTATE_REMOTE: ASK
+  mcpPermissions:
+    READ_HOST_METADATA: ASK
+    OPEN_HOST: ASK
+    MANAGE_WORKSPACE: DENY
+    IMPORT_EXPORT: DENY
+    READ_LOCAL: ASK
+    WRITE_LOCAL: ASK
+    MUTATE_LOCAL: ASK
+    LIST_REMOTE: ASK
+    RUN_COMMAND: ASK
+    UPLOAD: ASK
+    DOWNLOAD: ASK
+    MUTATE_REMOTE: ASK
+  allowedLocalRoots: [] # AI/MCP 可读写的本地绝对目录。
+  allowedRemoteRoots: [] # AI/MCP 可新建、重命名、删除和修改权限的远程绝对目录。
+  maxToolRounds: 20 # 单次内置 AI 请求连续调用工具的轮数上限，范围 1-100。
+  mcpServer:
+    enabled: false
+    port: 37654
+    tokenHash: null # MCP 服务鉴权使用的 sha256:<base64>。
+    tokenSecretId: null # 明文 Key 以 type=TOKEN 加密保存后的 SecretId，可在配置中心重复查看和复制。
+
+vault: # 加密保险库元数据；不直接保存主密码或明文数据密钥。
+  cryptoVersion: 1 # 保险库密码学格式版本。
+  vaultId: 00000000-0000-0000-0000-000000000001 # 保险库 UUID，也参与认证附加数据。
+  kdfAlgorithm: ARGON2ID # 主密码派生算法；当前固定为 ARGON2ID。
+  kdfSalt: BASE64_16_BYTE_SALT # Argon2id 随机盐，16 字节 Base64。
+  kdfMemoryKiB: 65536 # Argon2id 内存成本，单位 KiB。
+  kdfIterations: 3 # Argon2id 迭代次数。
+  kdfParallelism: 4 # Argon2id 并行度。
+  wrapNonce: BASE64_12_BYTE_NONCE # 包装数据密钥时使用的 AES-GCM 12 字节随机 nonce。
+  wrappedDek: BASE64_WRAPPED_DATA_KEY # 由主密码派生密钥包装后的随机数据密钥密文。
+  verifierNonce: BASE64_12_BYTE_NONCE # 保险库校验记录的 AES-GCM 12 字节随机 nonce。
+  verifierCiphertext: BASE64_VERIFIER_CIPHERTEXT # 用数据密钥加密的校验记录，用于验证解锁结果。
+  rememberedKek: null # 可选的 Base64 派生解锁密钥；rememberUnlock=false 时必须为空。
+
+credentials: # 凭证库记录；键是稳定的 SecretId UUID。
+  00000000-0000-0000-0000-000000000002:
+    cryptoVersion: 1 # 单条凭证密文格式版本。
+    type: PASSWORD # 密码为 PASSWORD；内嵌私钥为 PRIVATE_KEY。
+    nonce: BASE64_12_BYTE_NONCE # 本条凭证独立使用的 AES-GCM 12 字节随机 nonce。
+    ciphertext: BASE64_CREDENTIAL_CIPHERTEXT # 使用保险库数据密钥加密后的秘密正文。
+    createdAt: 1787112000000 # 创建时间，UTC Unix epoch 毫秒。
+    updatedAt: 1787112000000 # 最后更新时间，UTC Unix epoch 毫秒。
+    label: 示例管理员凭证 # 凭证库中显示的名称，1 至 255 个字符。
+    username: deploy # 可复用登录用户名，最多 255 个字符，可以为空字符串。
+    authentication: PASSWORD # SSH 认证类型：PASSWORD 或 PRIVATE_KEY。
+    scope: REUSABLE # REUSABLE 为可复用永久凭证；HOST_BOUND 为主机专属凭证。
+    ownerHostId: null # HOST_BOUND 时填写唯一所属主机 UUID；REUSABLE 必须为空。
+
+tokens: # API Provider 与 MCP 的加密令牌；不保存 SSH 登录凭证。
+  00000000-0000-0000-0000-000000000003:
+    cryptoVersion: 1 # 单条令牌密文格式版本。
+    type: TOKEN # 本分区只允许 TOKEN。
+    nonce: BASE64_12_BYTE_NONCE # 本条令牌独立使用的 AES-GCM 12 字节随机 nonce。
+    ciphertext: BASE64_TOKEN_CIPHERTEXT # 使用同一保险库数据密钥加密，但与 credentials 分区。
+    createdAt: 1787112000000 # 创建时间，UTC Unix epoch 毫秒。
+    updatedAt: 1787112000000 # 最后更新时间，UTC Unix epoch 毫秒。

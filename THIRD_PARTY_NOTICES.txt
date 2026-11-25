@@ -1,0 +1,146 @@
+FASTREMOTE THIRD-PARTY SOFTWARE, FONT, AND ARTWORK NOTICES
+Release baseline: FastRemote 1.0.0
+Notice revision: 15 September 2026
+
+The components listed below remain available under their respective licenses,
+which control for those components in every FastRemote edition.
+
+The license texts distributed in the LICENSES directory and the legal files
+inside the bundled Java runtime and dependency JARs form part of this notice.
+Source availability information is in SOURCE_OFFER.txt.
+
+1. Eclipse Public Licenses
+
+Eclipse Public License 1.0
+
+Pty4J 0.13.9
+Copyright JetBrains s.r.o. and contributors.
+Source: https://github.com/JetBrains/pty4j
+License: Eclipse Public License 1.0.
+
+FastRemote uses the published Pty4J binary as a separate library. FastRemote's
+independent modules are not licensed under the EPL. Source code for the Pty4J
+Program is available as described in SOURCE_OFFER.txt. Any FastRemote-distributed
+modification to the Pty4J Program must remain available under the EPL 1.0.
+
+Pty4J contains native components derived from or incorporating WinPTY and
+Windows Terminal/OpenConsole. Their copyright and MIT license notices are
+retained in this notice and in the source distributions referenced by
+SOURCE_OFFER.txt.
+
+WinPTY: Copyright (c) 2011-2018 Ryan Prichard. MIT License.
+Windows Terminal/OpenConsole: Copyright (c) Microsoft Corporation. MIT License.
+
+Eclipse Public License 2.0
+
+Eclipse TM4E Core 0.17.2 and selected Language Pack grammar resources
+Copyright Eclipse TM4E contributors.
+Source: https://github.com/eclipse-tm4e/tm4e/tree/0.17.2
+License: Eclipse Public License 2.0.
+
+FastRemote uses the published TM4E Core binary as a separate library and copies
+only the selected grammar resources required by the embedded editor from the
+Language Pack during the build. Its About file with exact grammar provenance
+and upstream source revisions is retained as
+META-INF/fastremote/textmate/LANGUAGE_PACK_ABOUT.html. FastRemote's independent
+modules are not licensed under the EPL. Source availability is described in
+SOURCE_OFFER.txt, and the complete EPL 2.0 text is in LICENSES/EPL-2.0.txt.
+
+2. GPLv2 with the Classpath Exception
+
+BellSoft Liberica JDK 21 Full 21.0.12.1+1-LTS and its bundled JavaFX 21.0.12.1
+Copyright BellSoft, Oracle and/or its affiliates, and the respective
+OpenJDK/OpenJFX contributors.
+Licenses: GNU General Public License version 2 with the Classpath Exception;
+applicable OpenJDK Assembly Exception and third-party notices.
+Sources: https://bell-sw.com/pages/downloads/,
+https://github.com/openjdk/jdk21u, and https://github.com/openjdk/jfx
+
+The Classpath Exception permits FastRemote's independent proprietary modules to
+link with these libraries. It does not convert OpenJDK or OpenJFX into
+proprietary software. Their complete legal files remain in the application
+runtime, LICENSES directory, and corresponding source distributions.
+
+3. Apache License 2.0
+
+The following components are used under Apache License 2.0. Copyright and NOTICE
+content shipped by their authors is retained in the original JARs and/or the
+FastRemote legal bundle.
+
+* Apache MINA SSHD 2.18.0 — Apache Software Foundation.
+* JediTermFX 1.1.0, FastRemote-maintained fork — Pavel Castornii, Techsenger,
+  JetBrains s.r.o., and contributors. FastRemote expressly selects the Apache
+  License 2.0 option offered by the upstream dual license.
+* Jackson 2.22.x — FasterXML, LLC and contributors.
+* SQLite JDBC 3.53.2.1 — Xerial Project and contributors.
+* SnakeYAML Engine 3.0.1 — SnakeYAML authors and contributors.
+* Kotlin Standard Library — JetBrains s.r.o. and contributors.
+* JetBrains Java Annotations — JetBrains s.r.o. and contributors.
+* Java Native Access (JNA) 5.14.0 — Timothy Wall and contributors. FastRemote
+  selects the Apache License 2.0 option.
+* jcl-over-slf4j — QOS.ch and contributors.
+* Selected IntelliJ Platform icon source geometry — JetBrains s.r.o. and
+  contributors. See the packaged icon NOTICE for exact source directories.
+* OpenAI Codex, when separately installed or distributed — OpenAI and
+  contributors. Current FastRemote packages do not bundle Codex.
+
+4. MIT, BSD, and ISC licensed software
+
+* Bouncy Castle Java 1.85 — Copyright (c) 2000-2026 The Legion of the Bouncy
+  Castle Inc. MIT License.
+* Cloudflare CIRCL 1.6.5 — Copyright (c) 2019 Cloudflare and contributors.
+  BSD 3-Clause License. Used by the bundled Go License Agent for RFC 9180 HPKE.
+* SLF4J 1.7/2.0 components — Copyright QOS.ch and contributors. MIT License.
+* dbus-java 5.2.0 core and native Unix socket transport — Copyright (c)
+  2005-2006 Matthew Johnson, Copyright (c) 2017-2021 David M. and contributors.
+  MIT License. Used for the Linux XDG Desktop Portal file chooser integration.
+* RichTextFX 0.11.7, FastRemote-maintained source fork, and its ReactFX 2.0-M5, UndoFX 2.1.1, Flowless 0.7.4,
+  and WellBehavedFX 0.3.3 runtime components — Tomas Mikula and contributors.
+  FastRemote uses their permissive BSD license options for the embedded text editor.
+  RichTextFX modifications add configurable signed fractional spacing; its complete
+  copyright and license notice is in LICENSES/RichTextFX-BSD-2-Clause.txt.
+* Gson 2.13.2 — Google LLC and contributors. Apache License 2.0.
+* Error Prone Annotations 2.41.0 — Google LLC and contributors. Apache License 2.0.
+* Joni 2.2.6 and JCodings 1.0.63 — JRuby contributors. MIT License. These
+  pure-Java libraries provide the Oniguruma-compatible regular expression
+  implementation used by TM4E.
+* commonmark-java 0.30.0, including GFM tables and strikethrough extensions —
+  Copyright (c) 2015, Robin Stocker. BSD 2-Clause License.
+  Used for the native chat document parser; no HTML renderer is invoked.
+* Lucide/Feather icon geometry — Copyright (c) Cole Bemis and Lucide
+  Contributors. ISC and MIT licenses. The complete notice is packaged with the
+  icon resources.
+
+The complete Cloudflare CIRCL and incorporated Go Authors BSD notices are in
+LICENSES/cloudflare-circl-BSD-3-Clause.txt.
+The complete dbus-java MIT notice is in LICENSES/dbus-java-MIT.txt.
+
+5. Fonts
+
+HarmonyOS Sans SC and HarmonyOS Sans TC
+Copyright 2021 Huawei Device Co., Ltd.
+License: HarmonyOS Sans Fonts License Agreement.
+
+FastRemote distributes unmodified copies of HarmonyOS Sans. HarmonyOS Sans is
+used in the FastRemote interface. It may not be modified or sold or
+redistributed on a stand-alone basis. The copyright notice and complete license
+are in the bundled font resources and LICENSES/fonts/LICENSE-update.txt.
+
+Noto Sans CJK JP, Noto Sans CJK KR, and Noto Sans Thai
+Copyright Google and the respective Noto font contributors.
+License: SIL Open Font License 1.1.
+
+JetBrains Mono NL
+Copyright 2020 The JetBrains Mono Project Authors.
+License: SIL Open Font License 1.1.
+
+OFL fonts may be bundled with and sold as part of FastRemote, but may not be
+sold by themselves. The fonts remain under the OFL.
+
+6. Trademarks and non-affiliation
+
+FastRemote is independently developed. OpenAI, ChatGPT, Codex, JetBrains,
+IntelliJ, Java, JavaFX, Apache, SecureCRT, SecureFX, Windows, macOS, Linux, and
+other names and marks are the property of their respective owners. References
+describe interoperability or third-party components only and do not imply
+affiliation, sponsorship, certification, or endorsement.

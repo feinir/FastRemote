@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ynpe.fastremote.ui.ThirdPartyImportDialog" spacing="10">
+    <HBox spacing="8">
+        <Button fx:id="localButton" text="%migration.local" onAction="#readLocal"/>
+        <Button fx:id="fileButton" text="%migration.file" onAction="#chooseFile"/>
+        <Button fx:id="folderButton" text="%migration.folder" onAction="#chooseFolder"/>
+    </HBox>
+    <Label fx:id="sourceLabel" wrapText="true"/>
+    <Label text="%migration.description" wrapText="true"/>
+    <TableView fx:id="table" editable="true" VBox.vgrow="ALWAYS"/>
+    <Button fx:id="keyButton" text="%migration.attachKey" onAction="#attachKey"/>
+    <TextField fx:id="missingUsername" promptText="%migration.usernamePrompt"/>
+    <CheckBox fx:id="skipDuplicates" text="%migration.skipDuplicates" selected="true"/>
+    <CheckBox fx:id="acknowledge" text="%migration.acknowledge" wrapText="true"/>
+    <Label fx:id="status" wrapText="true"/>
+</VBox>

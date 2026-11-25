@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import com.ynpe.fastremote.ui.LucideIconView?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1"
+ fx:controller="com.ynpe.fastremote.ui.AiAssistantController" styleClass="component-page, global-ai-page">
+ <SplitPane fx:id="aiChatSplit" dividerPositions="0.25" VBox.vgrow="ALWAYS" styleClass="ai-chat-split">
+ <VBox fx:id="aiConversationSidebar" minWidth="130.0" prefWidth="210.0" styleClass="ai-conversation-sidebar">
+  <VBox fx:id="aiSidebarHeader" spacing="4.0">
+   <HBox alignment="CENTER_LEFT"><Button fx:id="aiToggleSessionsButton" accessibleText="%ai.sessions.collapseSidebar" text="%workspace.titleMenu.aiAssistant" maxWidth="Infinity" contentDisplay="LEFT" onAction="#toggleSessions" styleClass="ai-sidebar-action, ai-sessions-toggle"><graphic><LucideIconView icon="PANEL_LEFT" styleClass="tool-window-icon"/></graphic><tooltip><Tooltip text="%ai.sessions.collapseSidebar"/></tooltip></Button>
+   <Region HBox.hgrow="ALWAYS"/><Button accessibleText="%ai.sessions.search" onAction="#toggleSessionSearch" contentDisplay="GRAPHIC_ONLY" styleClass="ai-sidebar-action"><graphic><LucideIconView icon="SEARCH" styleClass="tool-window-icon"/></graphic><tooltip><Tooltip text="%ai.sessions.search"/></tooltip></Button></HBox>
+   <TextField fx:id="aiSessionSearch" promptText="%ai.sessions.search" accessibleText="%ai.sessions.search" visible="false" managed="false"/>
+  <Button fx:id="aiNewChatButton" accessibleText="%ai.chat.create" text="%ai.chat.create" maxWidth="Infinity" contentDisplay="LEFT" onAction="#createChat" styleClass="ai-sidebar-action, ai-new-chat-button"><graphic><LucideIconView icon="CHAT_NEW" styleClass="tool-window-icon"/></graphic><tooltip><Tooltip text="%ai.chat.create"/></tooltip></Button>
+  </VBox>
+  <ListView fx:id="aiSessionList" minWidth="0.0" fixedCellSize="48.0" VBox.vgrow="ALWAYS" styleClass="ai-session-list"/>
+  <VBox fx:id="aiBatchFooter" spacing="8.0" managed="false" visible="false" styleClass="ai-batch-footer"/>
+ </VBox>
+ <VBox fx:id="aiChatMain" minWidth="310.0" styleClass="ai-chat-main">
+ <HBox alignment="CENTER_LEFT" spacing="5.0" styleClass="ai-chat-toolbar">
+ <HBox fx:id="aiCollapsedToolbar" alignment="CENTER_LEFT" spacing="5.0" managed="false" visible="false" styleClass="ai-collapsed-toolbar">
+  <Button accessibleText="%ai.sessions.expandSidebar" contentDisplay="GRAPHIC_ONLY" onAction="#toggleSessions" styleClass="ai-sidebar-action"><graphic><LucideIconView icon="PANEL_LEFT" styleClass="tool-window-icon"/></graphic><tooltip><Tooltip text="%ai.sessions.expandSidebar"/></tooltip></Button>
+  <Button accessibleText="%ai.chat.create" contentDisplay="GRAPHIC_ONLY" onAction="#createChat" styleClass="ai-sidebar-action"><graphic><LucideIconView icon="CHAT_NEW" styleClass="tool-window-icon"/></graphic><tooltip><Tooltip text="%ai.chat.create"/></tooltip></Button>
+ </HBox>
+  <Label fx:id="aiChatTitleLabel" maxWidth="Infinity" text="%ai.chat.newSession" textOverrun="ELLIPSIS" styleClass="ai-chat-title" HBox.hgrow="ALWAYS"/>
+  <Button fx:id="aiPlacementButton" accessibleText="%legacy.fxml.a5fdbd756fad1abc" contentDisplay="GRAPHIC_ONLY" onAction="#togglePlacement" styleClass="icon-button, catalog-create-button, ai-chat-toolbar-button"><graphic><LucideIconView fx:id="aiPlacementIcon" icon="PANELS_TOP_LEFT" styleClass="catalog-create-icon"/></graphic><tooltip><Tooltip fx:id="aiPlacementTooltip" text="%legacy.fxml.a5fdbd756fad1abc"/></tooltip></Button>
+ </HBox>
+ <StackPane fx:id="aiConversationHost" accessibleText="%legacy.fxml.80312d4f93cd6599" styleClass="ai-chat-host" VBox.vgrow="ALWAYS"/>
+ <VBox spacing="3.0" styleClass="ai-composer">
+  <VBox.margin><Insets top="8.0"/></VBox.margin>
+  <StackPane fx:id="aiPromptResizeHandle" accessibleText="%legacy.fxml.2f7607c96b83d63e" minHeight="10.0" prefHeight="10.0" maxHeight="10.0" styleClass="ai-prompt-resize-handle"><children><Region minHeight="1.0" prefHeight="1.0" maxHeight="1.0" minWidth="24.0" prefWidth="24.0" maxWidth="24.0" styleClass="ai-prompt-resize-grip"/></children></StackPane>
+  <ScrollPane fx:id="aiPendingScroll" fitToWidth="true" hbarPolicy="NEVER" maxHeight="144.0" managed="false" visible="false" styleClass="ai-pending-scroll"><content><VBox fx:id="aiPendingPane" spacing="4.0" styleClass="ai-pending-pane"/></content></ScrollPane>
+  <FlowPane fx:id="aiImagePreviewPane" accessibleText="%ai.image.attachments" hgap="6.0" vgap="6.0" managed="false" visible="false" styleClass="ai-image-preview-pane"/>
+  <TextArea fx:id="aiPromptField" accessibleText="%legacy.fxml.a1ab67379d161a1a" prefRowCount="2" promptText="%legacy.fxml.f5d7d27a66d0f843" styleClass="ai-prompt-field" wrapText="true"/>
+  <GridPane hgap="6.0" vgap="1.0" styleClass="ai-model-bar">
+   <ComboBox fx:id="aiProviderField" accessibleText="%legacy.fxml.98cf5e820a7ab350" minWidth="74.0" prefWidth="104.0" maxWidth="126.0" promptText="%legacy.fxml.43de42b3b4b7260e" styleClass="ai-provider-selector" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+   <ComboBox fx:id="aiModelField" accessibleText="%legacy.fxml.23a0527189020d53" minWidth="100.0" prefWidth="150.0" maxWidth="150.0" promptText="%legacy.fxml.1afed6a81a2512d2" styleClass="ai-model-selector" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+    <ComboBox fx:id="aiReasoningField" accessibleText="%legacy.fxml.c8c14507b2d37395" minWidth="78.0" prefWidth="100.0" maxWidth="100.0" promptText="%legacy.fxml.132411ba41da7354" styleClass="ai-reasoning-selector" visible="false" managed="false" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+   <HBox alignment="CENTER_LEFT" spacing="6.0" styleClass="ai-inference-row" GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.rowIndex="1">
+    <MenuButton fx:id="aiAssociatedHostField" minWidth="140.0" prefWidth="240.0" maxWidth="320.0" styleClass="ai-associated-host-selector"/>
+    <CheckBox fx:id="aiReasoningSummaryField" accessibleText="%legacy.fxml.f8e4bf33202cc02e" text="%legacy.fxml.c0b2c67971d10d00" styleClass="ai-reasoning-summary" visible="false" managed="false"><tooltip><Tooltip text="%legacy.fxml.c640f67dc1e76730"/></tooltip></CheckBox>
+   </HBox>
+   <Region mouseTransparent="true" GridPane.columnIndex="3" GridPane.rowIndex="0" GridPane.rowSpan="2" GridPane.hgrow="ALWAYS"/>
+   <Button accessibleText="%legacy.fxml.698b626865b231db" contentDisplay="GRAPHIC_ONLY" onAction="#configure" styleClass="ai-composer-button, ai-settings-button" GridPane.columnIndex="4" GridPane.rowIndex="0" GridPane.rowSpan="2" GridPane.valignment="CENTER"><graphic><LucideIconView icon="SETTINGS" styleClass="ai-composer-icon"/></graphic><tooltip><Tooltip text="%legacy.fxml.f1c6f1731dde8602"/></tooltip></Button>
+   <HBox minWidth="-Infinity" alignment="CENTER" spacing="3.0" GridPane.columnIndex="5" GridPane.rowIndex="0" GridPane.rowSpan="2">
+    <Button fx:id="aiStopButton" accessibleText="%ai.chat.stopGenerating" contentDisplay="GRAPHIC_ONLY" onAction="#stop" styleClass="ai-composer-button, ai-send-button, ai-stop-button" managed="false" visible="false"><graphic><LucideIconView icon="SQUARE" styleClass="ai-composer-icon, ai-send-icon"/></graphic><tooltip><Tooltip text="%ai.chat.stopGenerating"/></tooltip></Button>
+   <Button fx:id="aiSendButton" accessibleText="%legacy.fxml.edecf0ae6e5144f9" contentDisplay="GRAPHIC_ONLY" onAction="#sendOrInterrupt" styleClass="ai-composer-button, ai-send-button"><graphic><LucideIconView fx:id="aiSendIcon" icon="ARROW_UP" styleClass="ai-composer-icon, ai-send-icon"/></graphic><tooltip><Tooltip fx:id="aiSendTooltip" text="%legacy.fxml.f42b7fa9cb3ab0f4"/></tooltip></Button>
+    <MenuButton fx:id="aiSendOptions" accessibleText="%ai.queue.sendMode" managed="false" visible="false" styleClass="ai-send-options"><items><MenuItem text="%ai.queue.steer" onAction="#steer"/></items></MenuButton>
+   </HBox>
+  </GridPane>
+ </VBox>
+ <Label maxWidth="Infinity" styleClass="component-help" text="%legacy.fxml.48f271f9bc0c95a0" wrapText="true"/>
+</VBox>
+ </SplitPane>
+</VBox>

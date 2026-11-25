@@ -1,0 +1,14 @@
+JetBrains Mono NL Regular 2.304
+
+Upstream project: https://github.com/JetBrains/JetBrainsMono
+Pinned source tag: v2.304
+Font source: fonts/ttf/JetBrainsMonoNL-Regular.ttf
+License source: OFL.txt
+
+Bundled JetBrainsMonoNL-Regular.ttf SHA-256:
+fb3b2575d7b0657359707993288f12a7360344d39387bb26050e276d61f6bd2a
+
+The font is bundled unmodified as FastRemote's deterministic monospaced
+terminal fallback on systems where the configured font (including Monaco)
+is unavailable. The SIL Open Font License 1.1 is included alongside it as
+JETBRAINS_MONO_OFL.txt.

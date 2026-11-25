@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.VBox?>
+<fx:root type="VBox" xmlns:fx="http://javafx.com/fxml/1" spacing="8">
+    <children>
+        <Label fx:id="title" />
+        <Label fx:id="current" wrapText="true" />
+        <ComboBox fx:id="locationSelector" disable="true" />
+        <Label fx:id="target" wrapText="true" />
+        <Button fx:id="browse" disable="true" visible="false" managed="false" />
+        <Button fx:id="apply" disable="true" />
+        <Label fx:id="note" wrapText="true" />
+        <Label fx:id="status" wrapText="true" />
+    </children>
+</fx:root>

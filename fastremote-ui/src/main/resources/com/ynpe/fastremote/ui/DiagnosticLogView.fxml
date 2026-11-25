@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import com.ynpe.fastremote.ui.LucideIconView?>
+<?import com.ynpe.fastremote.ui.AlwaysVisibleVerticalTextArea?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1"
+ fx:controller="com.ynpe.fastremote.ui.DiagnosticLogController" spacing="0.0"
+ styleClass="component-page, diagnostic-log-page">
+ <HBox alignment="CENTER_RIGHT" spacing="5.0" styleClass="ai-chat-toolbar, diagnostic-log-toolbar">
+  <Region HBox.hgrow="ALWAYS"/>
+  <Button fx:id="diagnosticLogPlacementButton" accessibleText="%diagnostic.log.openWorkspace"
+   contentDisplay="GRAPHIC_ONLY" onAction="#togglePlacement"
+   styleClass="icon-button, catalog-create-button, ai-chat-toolbar-button">
+   <graphic><LucideIconView fx:id="diagnosticLogPlacementIcon" icon="PANELS_TOP_LEFT" styleClass="catalog-create-icon"/></graphic>
+   <tooltip><Tooltip fx:id="diagnosticLogPlacementTooltip" text="%diagnostic.log.openWorkspace"/></tooltip>
+  </Button>
+  <Button accessibleText="%diagnostic.log.clearView" contentDisplay="GRAPHIC_ONLY"
+   onAction="#clearDiagnosticLog" styleClass="icon-button, catalog-create-button, ai-chat-toolbar-button">
+   <graphic><LucideIconView icon="BRUSH_CLEANING" styleClass="catalog-create-icon"/></graphic>
+   <tooltip><Tooltip text="%diagnostic.log.clearView"/></tooltip>
+  </Button>
+ </HBox>
+ <AlwaysVisibleVerticalTextArea fx:id="diagnosticLogTextArea" accessibleText="%legacy.fxml.ddbb8eb3f78522ef"
+  editable="false" focusTraversable="true" styleClass="diagnostic-log-text-area"
+  wrapText="true" VBox.vgrow="ALWAYS"/>
+ <HBox alignment="CENTER_LEFT" spacing="8.0" styleClass="diagnostic-log-path-bar">
+  <Label fx:id="diagnosticLogPathLabel" alignment="CENTER_LEFT" maxHeight="38.0" maxWidth="Infinity"
+   minWidth="0.0" textOverrun="ELLIPSIS" wrapText="true" styleClass="diagnostic-log-path"
+   HBox.hgrow="ALWAYS"><tooltip><Tooltip fx:id="diagnosticLogPathTooltip"/></tooltip></Label>
+  <Button fx:id="diagnosticLogRevealButton" contentDisplay="GRAPHIC_ONLY"
+   minHeight="34.0" prefHeight="34.0" maxHeight="34.0" minWidth="40.0" prefWidth="40.0" maxWidth="40.0"
+   onAction="#revealCurrentLogFile" styleClass="compact-button">
+   <graphic><LucideIconView icon="LOCATE_FIXED" styleClass="toolbar-action-icon"/></graphic>
+   <tooltip><Tooltip fx:id="diagnosticLogRevealTooltip"/></tooltip>
+  </Button>
+  <Button accessibleText="%diagnostic.log.openCleanupSettings" contentDisplay="GRAPHIC_ONLY"
+   minHeight="34.0" prefHeight="34.0" maxHeight="34.0" minWidth="40.0" prefWidth="40.0" maxWidth="40.0"
+   onAction="#openLogCleanupSettings" styleClass="compact-button">
+   <graphic><LucideIconView icon="TRASH_2" styleClass="toolbar-action-icon"/></graphic>
+   <tooltip><Tooltip text="%diagnostic.log.openCleanupSettings"/></tooltip>
+  </Button>
+ </HBox>
+</VBox>

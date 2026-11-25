@@ -1,0 +1,177 @@
+@FASTREMOTE-BUILTIN-COMMANDS:1
+@group	core.group.001	Linux 常用	BLUE
+@command	core.command.0001	core.group.001	Linux · 系統與發行版	uname -a; printf '\\\\n'; cat /etc/os-release 2>/dev/null	Linux：顯示核心、架構與發行版識別碼；極簡系統可能缺少 /etc/os-release。
+@command	core.command.0002	core.group.001	Linux · 主機資訊	hostnamectl 2>/dev/null || hostname	Linux：顯示主機名稱；systemd 環境下還會顯示硬體型號、虛擬化狀態及核心等中繼資料。
+@command	core.command.0003	core.group.001	Linux · 目前身份	whoami; id	Linux：顯示目前使用者及其 UID、主要群組與附加群組。
+@command	core.command.0004	core.group.001	Linux · 線上時長	uptime	Linux：顯示系統運作時間、目前使用者數及 1/5/15 分鐘負載平均值。
+@command	core.command.0005	core.group.001	Linux · 目前登入使用者	w	Linux：顯示目前登入工作階段、來源、閒置時間及前台活動。
+@command	core.command.0006	core.group.001	Linux · 最近登入	last -n 25	Linux：讀取登入歷史並顯示最近 25 筆記錄；結果取決於系統是否保留 wtmp。
+@command	core.command.0007	core.group.001	Linux · 最近重啟	last reboot -n 10	Linux：從登入歷史中顯示最近 10 次啟動記錄；結果取決於系統是否保留 wtmp。
+@command	core.command.0008	core.group.001	Linux · 時間與時區	timedatectl 2>/dev/null || date	Linux：顯示時間、時區及同步狀態；非 systemd 系統將回退為目前日期時間。
+@command	core.command.0009	core.group.001	Linux · CPU 資訊	lscpu	Linux：顯示 CPU 架構、核心數、執行緒數、NUMA 及虛擬化資訊；需安裝 util-linux。
+@command	core.command.0010	core.group.001	Linux · 記憶體使用	free -h	Linux：以易讀單位顯示實體記憶體、可用記憶體及交換空間。
+@command	core.command.0011	core.group.001	Linux · 資源快照	top -b -n 1 | head -n 35	Linux：擷取一次非互動式的負載、CPU、記憶體及行程快照；不同 top 實作的輸出可能不同。
+@command	core.command.0012	core.group.001	Linux · 全部行程	ps -ef	Linux：顯示所有行程的使用者、PID、父 PID、啟動時間及指令。
+@command	core.command.0013	core.group.001	Linux · 高佔用行程	ps -eo pid,ppid,user,stat,%cpu,%mem,etime,comm,args --sort=-%cpu | head -n 31	Linux：依 CPU 使用率顯示前 30 個行程；%CPU 為 ps 統計口徑，不等於即時取樣。
+@command	core.command.0014	core.group.001	Linux · 搜尋行程	pgrep -af "{{input,程序名稱或正規表示式,default=nginx}}"	Linux：依名稱或正規表示式比對行程，並顯示 PID 與完整指令列；無比對結果時結束碼為 1。
+@command	core.command.0015	core.group.001	Linux · 行程樹	(command -v pstree >/dev/null && pstree -ap) || ps -ef --forest	Linux：顯示行程父子關係；優先使用 pstree，否則使用 GNU ps 的樹狀輸出。
+@command	core.command.0016	core.group.001	Linux · 行程開啟檔案	lsof -nP -p "{{input,程序 PID,default=1}}"	Linux：顯示指定行程開啟的檔案與套接字；需安裝 lsof，檢視其他使用者行程可能需要管理員權限。
+@command	core.command.0017	core.group.001	Linux · 檔案系統空間	df -hT	Linux：以易讀單位顯示已掛載檔案系統的類型、容量及空間使用率。
+@command	core.command.0018	core.group.001	Linux · 檔案系統 inode	df -ih	Linux：顯示 inode 使用情況，用於排查空間尚有剩餘但無法建立檔案的問題。
+@command	core.command.0019	core.group.001	Linux · 區塊裝置	lsblk -o NAME,TYPE,SIZE,FSTYPE,FSVER,LABEL,UUID,MOUNTPOINTS	Linux：顯示磁碟、分割區、檔案系統識別碼及掛載點；需安裝 util-linux。
+@command	core.command.0020	core.group.001	Linux · 掛載資訊	findmnt -o TARGET,SOURCE,FSTYPE,OPTIONS	Linux：以樹狀結構顯示掛載來源、目標、檔案系統及選項；需安裝 util-linux。
+@command	core.command.0021	core.group.001	Linux · 檢視目錄	ls -lah -- "{{input,目錄路徑,default=/var/log}}"	Linux：列出指定目錄的常規項目、隱藏項目、權限、擁有者、大小及時間。
+@command	core.command.0022	core.group.001	Linux · 目錄佔用	du -sh -- "{{input,目錄路徑,default=/var/log}}"	Linux：彙總指定目錄佔用空間；大型目錄可能耗時，並可能因權限不足而跳過內容。
+@command	core.command.0023	core.group.001	Linux · 一級目錄佔用	du -xhd 1 -- "{{input,目錄路徑,default=/var}}" 2>/dev/null | sort -h	Linux/GNU：依大小列出同一檔案系統內指定目錄及其直接子目錄；大型目錄可能耗時。
+@command	core.command.0024	core.group.001	Linux · 大型檔案搜尋	find "{{input,目錄路徑,default=/var}}" -xdev -type f -size +"{{input,最小大小,default=100M}}" -printf '%s %p\\\\n' 2>/dev/null | sort -n | tail -n 50	Linux/GNU：在同一檔案系統內列出最大的 50 個超限檔案；掃描大型目錄可能耗時。
+@command	core.command.0025	core.group.001	Linux · 核心近期訊息	dmesg --level=emerg,alert,crit,err,warn 2>/dev/null | tail -n 100	Linux：顯示最近 100 條警告及以上級別的核心訊息；部分系統限制一般使用者讀取。
+@command	core.command.0026	core.group.001	Linux · 系統嚴重日誌	journalctl -p 0..3 -n 100 --no-pager	Linux/systemd：顯示最近 100 條錯誤及更嚴重的系統日誌；讀取完整日誌可能需要權限。
+@command	core.command.0027	core.group.001	Linux · 本次啟動日誌	journalctl -b -n 100 --no-pager	Linux/systemd：顯示本次啟動最近 100 條日誌，不持續追蹤。
+@command	core.command.0028	core.group.001	Linux · 失敗服務	systemctl --failed --no-pager	Linux/systemd：列出目前失敗的 systemd 單元，不修改服務狀態。
+@command	core.command.0029	core.group.001	Linux · 服務狀態	systemctl status "{{input,服務名稱,default=sshd}}" --no-pager	Linux/systemd：查看指定服務狀態和近期日誌，不執行啟動、停止或重啟。
+@command	core.command.0030	core.group.001	Linux · 服務近期日誌	journalctl -u "{{input,服務名稱,default=sshd}}" -n "{{input,日誌筆數,default=100}}" --no-pager	Linux/systemd：顯示指定服務最近若干條日誌，不持續追蹤。
+@command	core.command.0031	core.group.001	Linux · 排程器列表	systemctl list-timers --all --no-pager	Linux/systemd：顯示 systemd 排程器的上次和下次觸發時間。
+@command	core.command.0032	core.group.001	Linux · Cron 排程	(crontab -l 2>/dev/null || true); printf '\\\\n--- /etc/cron.d ---\\\\n'; ls -la /etc/cron.d 2>/dev/null	Linux：顯示目前使用者的 crontab 和系統 cron.d 目錄；不讀取其他使用者的排程任務。
+@command	core.command.0033	core.group.001	Linux · 網路位址	ip -brief address	Linux：精簡顯示網路介面狀態及 IPv4/IPv6 位址；需要 iproute2。
+@command	core.command.0034	core.group.001	Linux · 路由表	ip route show table all	Linux：顯示所有路由表中的 IPv4 路由；策略路由環境下比預設表更完整。
+@command	core.command.0035	core.group.001	Linux · IPv6 路由	ip -6 route show table all	Linux：顯示所有路由表中的 IPv6 路由；未啟用 IPv6 時可能為空。
+@command	core.command.0036	core.group.001	Linux · 監聽埠	ss -H -lntup	Linux：顯示 TCP/UDP 監聽套接字；程序資訊的完整性取決於目前權限。
+@command	core.command.0037	core.group.001	Linux · 已建立 TCP	ss -H -tnp state established	Linux：顯示已建立的 TCP 連線及目前使用者可見的程序資訊。
+@command	core.command.0038	core.group.001	Linux · 鄰居快取	ip neigh show	Linux：顯示 IPv4 ARP 與 IPv6 NDP 鄰居快取及狀態。
+@command	core.command.0039	core.group.001	Linux · DNS 狀態	(resolvectl status 2>/dev/null || systemd-resolve --status 2>/dev/null || cat /etc/resolv.conf)	Linux：優先顯示 systemd-resolved 的逐介面狀態，否則顯示靜態解析器設定。
+@command	core.command.0040	core.group.001	Linux · DNS 查詢	(getent ahosts "{{input,網域,default=example.com}}" || host "{{input,網域,default=example.com}}" || nslookup "{{input,網域,default=example.com}}")	Linux：解析指定網域名稱；優先使用系統 NSS，備援工具是否存在取決於安裝情況。
+@command	core.command.0041	core.group.001	Linux · Ping 目標	ping -c 4 -W 3 "{{input,目標主機,default=1.1.1.1}}"	Linux：向目標發送 4 個 ICMP 探測包，每個回應最多等待 3 秒；防火牆可能丟棄 ICMP。
+@command	core.command.0042	core.group.001	Linux · 路由追蹤	(tracepath "{{input,目標主機,default=1.1.1.1}}" || traceroute "{{input,目標主機,default=1.1.1.1}}")	Linux：追蹤到目標的網路路徑；需要 tracepath 或 traceroute，部分節點可能不回應。
+@command	core.command.0043	core.group.001	Linux · 測試 TCP 埠	nc -vz -w 5 "{{input,目標主機,default=1.1.1.1}}" "{{input,目標連接埠,default=22}}"	Linux：使用 netcat 測試 TCP 建連，5 秒逾時；需要安裝 nc。
+@command	core.command.0044	core.group.001	Linux · HTTP 回應標頭	curl -fsSIL --max-time 10 "{{input,URL,default=https://example.com}}"	Linux：跟隨重定向並顯示 HTTP 回應標頭，10 秒逾時；需要 curl，憑證驗證保持啟用。
+@command	core.command.0045	core.group.001	Linux · iptables 規則	iptables -nL -v --line-numbers	Linux/iptables：唯讀列出 IPv4 過濾表規則和計數器；通常需要管理員權限，不代表 nftables 全部規則。
+@command	core.command.0046	core.group.001	Linux · nftables 規則	nft list ruleset	Linux/nftables：唯讀列出完整 nftables 規則集；需要 nft，通常需要管理員權限。
+@command	core.command.0047	core.group.001	Linux · firewalld 狀態	firewall-cmd --state; firewall-cmd --get-active-zones; firewall-cmd --list-all	Linux/firewalld：顯示服務狀態、活動區域及預設區域規則；可能需要權限。
+@command	core.command.0048	core.group.001	Linux · UFW 狀態	ufw status verbose	Linux/UFW：顯示 UFW 狀態、預設策略與規則；通常需要管理員權限。
+@command	core.command.0049	core.group.001	Linux · OpenSSH 版本	ssh -V; sshd -V 2>&1 | head -n 1	Linux/OpenSSH：顯示客戶端與伺服器版本；若 sshd 不在 PATH 或無執行權限，伺服器資訊可能缺失。
+@command	core.command.0050	core.group.001	Linux · 套件查詢	(command -v rpm >/dev/null && rpm -qa | grep -i "{{input,軟體套件關鍵字,default=openssh}}") || (command -v dpkg-query >/dev/null && dpkg-query -W '*{{input,軟體套件關鍵字,default=openssh}}*')	Linux：在 RPM 或 Debian 系統中查詢已安裝套件；關鍵字依對應套件管理員規則匹配。
+@command	core.command.0051	core.group.001	Linux · Java 版本	java -version	Linux：顯示目前 PATH 中 Java 的執行時版本；版本資訊通常寫入標準錯誤。
+@command	core.command.0052	core.group.001	Linux · 虛擬化類型	(systemd-detect-virt 2>/dev/null || virt-what 2>/dev/null || true)	Linux：嘗試識別虛擬機或容器；空輸出也可能表示實體機或缺少識別工具。
+@command	core.command.0053	core.group.001	Linux · Docker 容器	docker ps --all	Linux/Docker：顯示所有容器及其狀態；需要 Docker CLI 及存取守護程序的權限。
+@command	core.command.0054	core.group.001	Linux · Docker 容器詳情	docker inspect "{{input,容器名稱或 ID,default=my-container}}"	Linux/Docker：顯示指定容器的完整設定與執行狀態；輸出可能包含環境變數等敏感業務資料。
+@group	core.group.002	Windows 常用	BLUE
+@command	core.command.0055	core.group.002	Windows · 目前身分	whoami.exe /all	Windows：顯示目前使用者 SID、群組、特權與完整性層級。
+@command	core.command.0056	core.group.002	Windows · 系統版本	cmd.exe /d /c ver	Windows：顯示命令解譯器回報的 Windows 版本號；資訊較簡略。
+@command	core.command.0057	core.group.002	Windows · 系統摘要	systeminfo.exe	Windows：顯示作業系統、修補程式、啟動時間、記憶體、網域與網路摘要；查詢可能需要數秒。
+@command	core.command.0058	core.group.002	Windows · 作業系統詳情	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-CimInstance Win32_OperatingSystem | Format-List Caption,Version,BuildNumber,OSArchitecture,InstallDate,LastBootUpTime"	Windows/PowerShell：顯示作業系統版本、架構、安裝日期與上次啟動時間。
+@command	core.command.0059	core.group.002	Windows · 電腦資訊	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-CimInstance Win32_ComputerSystem | Format-List Manufacturer,Model,SystemType,Domain,PartOfDomain,TotalPhysicalMemory"	Windows/PowerShell：顯示廠商、型號、系統類型、網域成員關係與實體記憶體總量。
+@command	core.command.0060	core.group.002	Windows · 近期修補	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-HotFix | Sort-Object InstalledOn -Descending | Select-Object -First 30 HotFixID,Description,InstalledOn"	Windows/PowerShell：顯示最近 30 條可由 Get-HotFix 讀取的更新；不涵蓋所有更新類型。
+@command	core.command.0061	core.group.002	Windows · 線上時長	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "$os=Get-CimInstance Win32_OperatingSystem; [pscustomobject]@{LastBoot=$os.LastBootUpTime; Uptime=(Get-Date)-$os.LastBootUpTime} | Format-List"	Windows/PowerShell：根據上次啟動時間計算線上時長。
+@command	core.command.0062	core.group.002	Windows · 時間與時區	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-Date; Get-TimeZone | Format-List Id,DisplayName,BaseUtcOffset,SupportsDaylightSavingTime"	Windows/PowerShell：顯示目前日期時間與時區設定。
+@command	core.command.0063	core.group.002	Windows · 登入工作階段	quser.exe	Windows：顯示互動式使用者工作階段、狀態與閒置時間；部分版本未提供該命令。
+@command	core.command.0064	core.group.002	Windows · CPU 資訊	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-CimInstance Win32_Processor | Format-List Name,Manufacturer,NumberOfCores,NumberOfLogicalProcessors,MaxClockSpeed,VirtualizationFirmwareEnabled"	Windows/PowerShell：顯示處理器型號、核心、邏輯處理器與韌體虛擬化狀態。
+@command	core.command.0065	core.group.002	Windows · 記憶體資訊	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-CimInstance Win32_OperatingSystem | Select-Object @{N='TotalMB';E={[math]::Round($_.TotalVisibleMemorySize/1024)}},@{N='FreeMB';E={[math]::Round($_.FreePhysicalMemory/1024)}},@{N='FreePercent';E={[math]::Round(100*$_.FreePhysicalMemory/$_.TotalVisibleMemorySize,1)}} | Format-List"	Windows/PowerShell：顯示作業系統可見實體記憶體的總量、閒置量與閒置比例。
+@command	core.command.0066	core.group.002	Windows · 工作清單	tasklist.exe /V	Windows：顯示程序、PID、工作階段、記憶體與視窗標題；輸出可能較長。
+@command	core.command.0067	core.group.002	Windows · 高 CPU 程序	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-Process | Sort-Object CPU -Descending | Select-Object -First 30 Id,ProcessName,CPU,WorkingSet,StartTime"	Windows/PowerShell：依程序啟動以來累計 CPU 時間顯示前 30 項，並非即時 CPU 排名。
+@command	core.command.0068	core.group.002	Windows · 高記憶體程序	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-Process | Sort-Object WorkingSet64 -Descending | Select-Object -First 30 Id,ProcessName,@{N='WorkingSetMB';E={[math]::Round($_.WorkingSet64/1MB,1)}},CPU"	Windows/PowerShell：依工作集記憶體顯示前 30 個程序。
+@command	core.command.0069	core.group.002	Windows · 搜尋程序	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-Process -Name '{{input,程序名稱,default=explorer}}' | Select-Object Id,ProcessName,Path,StartTime"	Windows/PowerShell：依程序名稱搜尋程序；名稱通常不含 .exe，無匹配時回傳錯誤。
+@command	core.command.0070	core.group.002	Windows · 程序命令列	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-CimInstance Win32_Process | Select-Object ProcessId,ParentProcessId,Name,ExecutablePath,CommandLine"	Windows/PowerShell：顯示可存取程序的父 PID、路徑與命令列；部分欄位需要更高權限。
+@command	core.command.0071	core.group.002	Windows · 遠端開啟檔案	openfiles.exe /query /fo TABLE /v	Windows：顯示透過共用目錄遠端開啟的檔案；通常需要管理員權限，本機檔案僅在預先啟用物件清單維護時可見。
+@command	core.command.0072	core.group.002	Windows · 服務狀態	sc.exe queryex "{{input,服務名稱,default=sshd}}"	Windows：依服務名稱顯示狀態、PID 和結束碼，不啟動或停止服務。
+@command	core.command.0073	core.group.002	Windows · 服務設定	sc.exe qc "{{input,服務名稱,default=sshd}}"	Windows：顯示服務啟動類型、執行帳戶、相依項目和可執行檔路徑。
+@command	core.command.0074	core.group.002	Windows · 服務詳細資訊	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-CimInstance Win32_Service -Filter \\"Name='{{input,服務名稱,default=sshd}}'\\" | Format-List Name,DisplayName,State,StartMode,StartName,PathName,ProcessId,ExitCode"	Windows/PowerShell：顯示指定服務的狀態、啟動模式、帳戶、路徑和 PID。
+@command	core.command.0075	core.group.002	Windows · 自動服務異常	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-CimInstance Win32_Service | Where-Object {$_.StartMode -eq 'Auto' -and $_.State -ne 'Running'} | Select-Object Name,DisplayName,State,StartMode,ExitCode"	Windows/PowerShell：列出設定為自動啟動但目前未執行的服務；延遲啟動或觸發啟動服務可能是正常狀態。
+@command	core.command.0076	core.group.002	Windows · 系統錯誤事件	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-WinEvent -FilterHashtable @{LogName='System';Level=1,2,3;StartTime=(Get-Date).AddHours(-1)} -ErrorAction SilentlyContinue | Select-Object -First 100 TimeCreated,Id,LevelDisplayName,ProviderName,Message | Format-List"	Windows/PowerShell：顯示最近 1 小時系統日誌中的嚴重、錯誤和警告事件，最多 100 條。
+@command	core.command.0077	core.group.002	Windows · 應用程式錯誤事件	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-WinEvent -FilterHashtable @{LogName='Application';Level=1,2,3;StartTime=(Get-Date).AddHours(-1)} -ErrorAction SilentlyContinue | Select-Object -First 100 TimeCreated,Id,LevelDisplayName,ProviderName,Message | Format-List"	Windows/PowerShell：顯示最近 1 小時應用程式日誌中的嚴重、錯誤和警告事件，最多 100 條。
+@command	core.command.0078	core.group.002	Windows · 指定提供者事件	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-WinEvent -FilterHashtable @{LogName='System';ProviderName='{{input,事件提供者,default=Service Control Manager}}';StartTime=(Get-Date).AddHours(-24)} -ErrorAction SilentlyContinue | Select-Object -First 100 TimeCreated,Id,LevelDisplayName,Message | Format-List"	Windows/PowerShell：顯示指定系統事件提供者最近 24 小時的事件，最多 100 條。
+@command	core.command.0079	core.group.002	Windows · 排程工作	schtasks.exe /query /fo LIST /v	Windows：唯讀列出排程工作、執行帳戶、觸發器和最近結果；輸出可能很長。
+@command	core.command.0080	core.group.002	Windows · 目錄清單	cmd.exe /d /c dir /a "{{input,目錄路徑,default=C:\\\\Windows\\\\Temp}}"	Windows：列出指定目錄的常規項目和隱藏/系統項目，不遞迴。
+@command	core.command.0081	core.group.002	Windows · 目錄佔用	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "$p='{{input,目錄路徑,default=C:\\\\Windows\\\\Temp}}'; $m=Get-ChildItem -LiteralPath $p -File -Recurse -Force -ErrorAction SilentlyContinue | Measure-Object Length -Sum; [pscustomobject]@{Path=$p;Files=$m.Count;SizeGB=[math]::Round($m.Sum/1GB,3)} | Format-List"	Windows/PowerShell：遞迴統計指定目錄的檔案數和總大小；大型目錄可能耗時且會跳過無權限訪問的項目。
+@command	core.command.0082	core.group.002	Windows · 大檔案搜尋	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-ChildItem -LiteralPath '{{input,目錄路徑,default=C:\\\\}}' -File -Recurse -Force -ErrorAction SilentlyContinue | Where-Object {$_.Length -ge {{input,最小 MB,default=100}}MB} | Sort-Object Length -Descending | Select-Object -First 50 FullName,@{N='SizeMB';E={[math]::Round($_.Length/1MB,1)}}"	Windows/PowerShell：遞迴顯示最大的 50 個超標檔案；掃描整個磁碟區可能耗時並產生較大 I/O。
+@command	core.command.0083	core.group.002	Windows · 檔案權限	icacls.exe "{{input,檔案或目錄路徑,default=C:\\\\Windows\\\\Temp}}"	Windows：顯示指定檔案或目錄的 NTFS 存取控制清單，不修改權限。
+@command	core.command.0084	core.group.002	Windows · 檔案系統磁碟區	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-Volume | Format-Table DriveLetter,FileSystemLabel,FileSystem,DriveType,HealthStatus,OperationalStatus,SizeRemaining,Size -Auto"	Windows/PowerShell：顯示磁碟區標籤、檔案系統、類型、健康狀態、剩餘空間和總容量。
+@command	core.command.0085	core.group.002	Windows · 實體磁碟	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-PhysicalDisk | Format-Table FriendlyName,MediaType,BusType,HealthStatus,OperationalStatus,Size -Auto"	Windows/PowerShell：顯示 Storage 模組可識別的實體磁碟及健康狀態；舊系統可能不支援。
+@command	core.command.0086	core.group.002	Windows · 磁碟分割	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-Disk | Format-Table Number,FriendlyName,PartitionStyle,OperationalStatus,HealthStatus,Size -Auto; Get-Partition | Format-Table DiskNumber,PartitionNumber,DriveLetter,Type,Size -Auto"	Windows/PowerShell：顯示磁碟和分割區佈局，不修改分割區。
+@command	core.command.0087	core.group.002	Windows · 網路設定	ipconfig.exe /all	Windows：顯示網卡位址、閘道、DNS、DHCP 和租約資訊。
+@command	core.command.0088	core.group.002	Windows · 網路介面卡	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-NetAdapter | Sort-Object ifIndex | Format-Table ifIndex,Name,InterfaceDescription,Status,LinkSpeed,MacAddress -Auto"	Windows/PowerShell：顯示網路介面卡狀態、鏈路速率和 MAC 位址；舊系統可能不支援 NetTCPIP 模組。
+@command	core.command.0089	core.group.002	Windows · 路由表	route.exe print	Windows：顯示 IPv4/IPv6 路由表和介面清單。
+@command	core.command.0090	core.group.002	Windows · 預設路由	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-NetRoute -DestinationPrefix '0.0.0.0/0','::/0' -ErrorAction SilentlyContinue | Sort-Object RouteMetric | Format-Table ifIndex,DestinationPrefix,NextHop,RouteMetric,InterfaceMetric -Auto"	Windows/PowerShell：顯示 IPv4/IPv6 預設路由並依路由度量排序。
+@command	core.command.0091	core.group.002	Windows · ARP 快取	arp.exe -a	Windows：顯示 IPv4 ARP 快取；IPv6 鄰居請使用鄰居快取範本。
+@command	core.command.0092	core.group.002	Windows · 鄰居快取	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-NetNeighbor | Format-Table ifIndex,IPAddress,LinkLayerAddress,State -Auto"	Windows/PowerShell：顯示 IPv4/IPv6 鄰居快取；舊系統可能不支援 NetTCPIP 模組。
+@command	core.command.0093	core.group.002	Windows · 網路連線	netstat.exe -ano	Windows：顯示 TCP/UDP 端點、連線狀態和 PID；不會解析程序名稱。
+@command	core.command.0094	core.group.002	Windows · TCP 監聽埠	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-NetTCPConnection -State Listen | Sort-Object LocalPort | Select-Object LocalAddress,LocalPort,OwningProcess,@{N='ProcessName';E={(Get-Process -Id $_.OwningProcess -ErrorAction SilentlyContinue).ProcessName}}"	Windows/PowerShell：顯示 TCP 監聽位址、埠號、PID 和可解析的程序名稱。
+@command	core.command.0095	core.group.002	Windows · 已建立 TCP	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-NetTCPConnection -State Established | Sort-Object RemoteAddress,RemotePort | Select-Object LocalAddress,LocalPort,RemoteAddress,RemotePort,OwningProcess"	Windows/PowerShell：顯示已建立的 TCP 連線及其 PID。
+@command	core.command.0096	core.group.002	Windows · DNS 伺服器	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-DnsClientServerAddress | Format-Table InterfaceAlias,AddressFamily,ServerAddresses -Auto"	Windows/PowerShell：顯示各網路介面設定的 IPv4/IPv6 DNS 伺服器。
+@command	core.command.0097	core.group.002	Windows · DNS 快取	ipconfig.exe /displaydns	Windows：顯示 Windows DNS 用戶端快取；輸出可能很長。
+@command	core.command.0098	core.group.002	Windows · DNS 查詢	nslookup.exe "{{input,網域,default=example.com}}"	Windows：使用系統設定的 DNS 伺服器解析指定名稱。
+@command	core.command.0099	core.group.002	Windows · Ping 目標	ping.exe -n 4 -w 3000 "{{input,目標主機,default=1.1.1.1}}"	Windows：向目標發送 4 個 ICMP 封包，每個回應最多等待 3 秒；防火牆可能丟棄 ICMP。
+@command	core.command.0100	core.group.002	Windows · 路由追蹤	tracert.exe -d -w 3000 "{{input,目標主機,default=1.1.1.1}}"	Windows：不進行反向名稱解析，追蹤至目標的路由，每跳等待 3 秒；部分節點可能無回應。
+@command	core.command.0101	core.group.002	Windows · 測試 TCP 埠	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Test-NetConnection -ComputerName '{{input,目標主機,default=1.1.1.1}}' -Port {{input,目標連接埠,default=22}} -InformationLevel Detailed"	Windows/PowerShell：測試指定 TCP 埠，並顯示名稱解析、來源位址及連線結果。
+@command	core.command.0102	core.group.002	Windows · HTTP 回應標頭	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "$r=Invoke-WebRequest -Uri '{{input,URL,default=https://example.com}}' -Method Head -TimeoutSec 10 -UseBasicParsing; $r.StatusCode; $r.Headers"	Windows/PowerShell：發送 HTTP HEAD 請求並顯示狀態碼與回應標頭，10 秒逾時；憑證驗證保持啟用。
+@command	core.command.0103	core.group.002	Windows · 防火牆設定檔	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-NetFirewallProfile | Format-Table Name,Enabled,DefaultInboundAction,DefaultOutboundAction,AllowInboundRules,LogFileName -Auto"	Windows/PowerShell：顯示網域、專用及公用防火牆設定檔的狀態與預設動作。
+@command	core.command.0104	core.group.002	Windows · 防火牆規則	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-NetFirewallRule -Enabled True | Select-Object -First 200 DisplayName,Direction,Action,Profile,PrimaryStatus"	Windows/PowerShell：顯示前 200 條已啟用防火牆規則摘要；不展開埠與位址過濾器。
+@command	core.command.0105	core.group.002	Windows · Defender 狀態	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-MpComputerStatus | Format-List AMServiceEnabled,AntivirusEnabled,RealTimeProtectionEnabled,AntivirusSignatureVersion,AntivirusSignatureLastUpdated,QuickScanAge,FullScanAge"	Windows/PowerShell：顯示 Microsoft Defender 引擎、防護及簽章狀態；若未安裝 Defender 則不可用。
+@command	core.command.0106	core.group.002	Windows · 本機使用者	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-LocalUser | Format-Table Name,Enabled,LastLogon,PasswordExpires,UserMayChangePassword -Auto"	Windows/PowerShell：顯示本機使用者狀態；網域控制器或舊版 PowerShell 可能不支援 LocalAccounts 模組。
+@command	core.command.0107	core.group.002	Windows · 本機群組	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-LocalGroup | Format-Table Name,Description -Auto"	Windows/PowerShell：顯示本機安全性群組；網域控制器或舊版 PowerShell 可能不支援 LocalAccounts 模組。
+@command	core.command.0108	core.group.002	Windows · 共用目錄	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-SmbShare | Format-Table Name,Path,Description,CurrentUsers,Special -Auto"	Windows/PowerShell：顯示 SMB 共用及目前使用者數；舊系統可能不支援 SmbShare 模組。
+@command	core.command.0109	core.group.002	Windows · OpenSSH 狀態	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-WindowsCapability -Online | Where-Object {$_.Name -like 'OpenSSH*'} | Select-Object Name,State; Get-Service -Name sshd,ssh-agent -ErrorAction SilentlyContinue"	Windows/PowerShell：顯示 Windows OpenSSH 選用功能及 sshd/ssh-agent 服務狀態；查詢線上映像可能需要管理員權限。
+@command	core.command.0110	core.group.002	Windows · 憑證到期檢查	powershell.exe -NoLogo -NoProfile -NonInteractive -Command "Get-ChildItem Cert:\\\\LocalMachine\\\\My | Sort-Object NotAfter | Select-Object Subject,Thumbprint,NotBefore,NotAfter,@{N='DaysLeft';E={[math]::Floor(($_.NotAfter-(Get-Date)).TotalDays)}}"	Windows/PowerShell：顯示本機個人憑證及剩餘天數；讀取本機憑證儲存區可能需要權限。
+@command	core.command.0111	core.group.002	Windows · Java 版本	java.exe -version	Windows：顯示目前 PATH 中 Java 的執行時版本；版本資訊通常寫入標準錯誤。
+@command	core.command.0112	core.group.002	Windows · Docker 容器	docker.exe ps --all	Windows/Docker：顯示所有容器及其狀態；需要 Docker CLI 及可存取的 Docker 引擎。
+@group	core.group.003	macOS 常用	BLUE
+@command	core.command.0113	core.group.003	Mac · 系統版本	sw_vers; printf '\\\\n'; uname -a	macOS：顯示產品版本、組建號、核心及處理器架構。
+@command	core.command.0114	core.group.003	Mac · 主機資訊	scutil --get ComputerName; scutil --get LocalHostName; hostname	macOS：依序顯示使用者可見的電腦名稱、本機主機名稱及目前主機名稱。
+@command	core.command.0115	core.group.003	Mac · 目前身分	whoami; id	macOS：顯示目前使用者及 UID、主要群組及附屬群組。
+@command	core.command.0116	core.group.003	Mac · 線上時長	uptime	macOS：顯示系統運作時間、目前使用者數及 1/5/15 分鐘負載平均值。
+@command	core.command.0117	core.group.003	Mac · 目前登入使用者	w	macOS：顯示目前登入工作階段、來源、閒置時間及前景活動。
+@command	core.command.0118	core.group.003	Mac · 最近登入	last -25	macOS：從登入歷史顯示最近 25 筆記錄；結果取決於系統保留的資料。
+@command	core.command.0119	core.group.003	Mac · 最近重開機	last reboot -10	macOS：從登入歷史顯示最近 10 次啟動記錄。
+@command	core.command.0120	core.group.003	Mac · 時間與時區	date; printf '\\\\nTime zone source: '; readlink /etc/localtime	macOS：顯示目前日期時間與時區資料庫連結；不會修改時間設定。
+@command	core.command.0121	core.group.003	Mac · 硬體摘要	system_profiler SPHardwareDataType	macOS：顯示 Mac 型號、晶片/處理器、核心、記憶體與硬體識別碼摘要。
+@command	core.command.0122	core.group.003	Mac · CPU 資訊	sysctl -n machdep.cpu.brand_string 2>/dev/null || sysctl -n hw.model; sysctl hw.physicalcpu hw.logicalcpu	macOS：顯示 Intel 處理器型號或硬體型號，以及實體與邏輯核心數。
+@command	core.command.0123	core.group.003	Mac · 記憶體頁統計	vm_stat	macOS：顯示虛擬記憶體頁計數；數值需結合頁面大小換算，非直接位元組數。
+@command	core.command.0124	core.group.003	Mac · 記憶體壓力	memory_pressure	macOS：顯示系統記憶體壓力、閒置比例與交換活動摘要。
+@command	core.command.0125	core.group.003	Mac · 資源快照	top -l 1 -n 20 -stats pid,command,cpu,mem,threads,state,time	macOS：擷取一次系統負載、CPU、記憶體與前 20 個程序快照。
+@command	core.command.0126	core.group.003	Mac · 全部程序	ps -axo user,pid,ppid,stat,%cpu,%mem,lstart,time,command	macOS：顯示所有程序的用戶、PID、父 PID、狀態、資源比例、啟動時間與指令。
+@command	core.command.0127	core.group.003	Mac · 高佔用程序	ps -arcwwwxo pid,ppid,user,state,%cpu,%mem,etime,command | head -n 31	macOS：依 CPU 使用率顯示前 30 個程序；%CPU 為 ps 取樣基準。
+@command	core.command.0128	core.group.003	Mac · 搜尋程序	pgrep -ifl "{{input,程序名稱或正規表示式,default=sshd}}"	macOS：不區分大小寫地依名稱或正規表示式比對程序，並顯示 PID 與指令名稱；無比對結果時結束碼為 1。
+@command	core.command.0129	core.group.003	Mac · 程序關係	ps -axo pid,ppid,pgid,sess,user,state,etime,command	macOS：顯示程序、父程序、程序群組與工作階段關係；輸出非縮排樹狀結構。
+@command	core.command.0130	core.group.003	Mac · 程序開啟檔案	lsof -nP -p "{{input,程序 PID,default=1}}"	macOS：顯示指定程序開啟的檔案與套接字；檢視其他使用者的程序可能需要管理員權限。
+@command	core.command.0131	core.group.003	Mac · 檔案系統空間	df -h	macOS：以易讀單位顯示已掛載檔案系統的容量與空間使用率。
+@command	core.command.0132	core.group.003	Mac · 檔案系統 inode	df -i	macOS：顯示 inode 使用情況；APFS 的 inode 行為與傳統固定 inode 檔案系統不同。
+@command	core.command.0133	core.group.003	Mac · 磁碟清單	diskutil list	macOS：顯示實體磁碟、容器、卷與分割區佈局，不修改磁碟。
+@command	core.command.0134	core.group.003	Mac · 啟動卷資訊	diskutil info /	macOS：顯示目前啟動卷的檔案系統、裝置、容量、加密與可寫狀態。
+@command	core.command.0135	core.group.003	Mac · APFS 資訊	diskutil apfs list	macOS：顯示 APFS 容器、實體儲存與卷關係；非 APFS 系統可能無結果。
+@command	core.command.0136	core.group.003	Mac · 掛載資訊	mount	macOS：顯示目前掛載點、檔案系統類型與掛載選項。
+@command	core.command.0137	core.group.003	Mac · 檢視目錄	ls -lah "{{input,目錄路徑,default=/var/log}}"	macOS：列出指定目錄的常規項目、隱藏項目、權限、擁有者、大小與時間。
+@command	core.command.0138	core.group.003	Mac · 目錄佔用	du -sh "{{input,目錄路徑,default=/var/log}}"	macOS：彙總指定目錄佔用；大型目錄可能耗時，並可能因隱私或權限限制略過內容。
+@command	core.command.0139	core.group.003	Mac · 一級目錄佔用	du -hd 1 "{{input,目錄路徑,default=/var}}" 2>/dev/null | sort -h	macOS：依大小列出指定目錄及其直接子目錄；跨卷內容也會被統計，大型目錄可能耗時。
+@command	core.command.0140	core.group.003	Mac · 大檔案搜尋	find -x "{{input,目錄路徑,default=/var}}" -type f -size +"{{input,最小大小,default=100M}}" -print 2>/dev/null | head -n 50	macOS：在同一檔案系統內顯示前 50 個超限檔案；順序非依大小排序，掃描可能耗時。
+@command	core.command.0141	core.group.003	Mac · 路徑佔用程序	lsof -nP +D "{{input,目錄路徑,default=/var/log}}"	macOS：遞迴搜尋開啟指定目錄內檔案的程序；大型目錄開銷較大，可能需要管理員權限。
+@command	core.command.0142	core.group.003	Mac · 系統錯誤日誌	log show --last 1h --style compact --predicate '(messageType == error) OR (messageType == fault)' | tail -n 200	macOS：顯示最近 1 小時最多末尾 200 行錯誤和故障級統一日誌；查詢可能耗時。
+@command	core.command.0143	core.group.003	Mac · 指定程序日誌	log show --last 1h --style compact --predicate 'process == "{{input,程序名稱,default=sshd}}"' | tail -n 200	macOS：顯示指定程序最近 1 小時最多末尾 200 行統一日誌；日誌隱私設定可能隱藏內容。
+@command	core.command.0144	core.group.003	Mac · 本次啟動核心日誌	log show --last boot --style compact --predicate 'process == "kernel"' | tail -n 200	macOS：顯示本次啟動最多末尾 200 行核心統一日誌；查詢可能耗時。
+@command	core.command.0145	core.group.003	Mac · Launchd 任務	launchctl list	macOS/launchd：顯示目前使用者引導域可見的任務、PID 和最近結束狀態。
+@command	core.command.0146	core.group.003	Mac · Launchd 服務詳情	launchctl print system/{{input,服務標籤,default=com.openssh.sshd}}	macOS/launchd：顯示系統域中指定服務的設定與執行狀態；必須輸入精確的 launchd 標籤。
+@command	core.command.0147	core.group.003	Mac · 網路硬體埠	networksetup -listallhardwareports	macOS：顯示硬體埠、BSD 介面名稱和 MAC 位址。
+@command	core.command.0148	core.group.003	Mac · 網路介面	ifconfig -a	macOS：顯示全部網路介面、狀態、位址和鏈路參數；輸出包含較多底層資訊。
+@command	core.command.0149	core.group.003	Mac · 預設路由	route -n get default	macOS：顯示 IPv4 預設路由、閘道和出口介面；無預設路由時回傳錯誤。
+@command	core.command.0150	core.group.003	Mac · 路由表	netstat -nr -f inet; printf '\\\\n--- IPv6 ---\\\\n'; netstat -nr -f inet6	macOS：顯示 IPv4 和 IPv6 路由表，不執行名稱解析。
+@command	core.command.0151	core.group.003	Mac · TCP 監聽埠	lsof -nP -iTCP -sTCP:LISTEN	macOS：顯示目前權限可見的 TCP 監聽埠及程序；不包含 UDP。
+@command	core.command.0152	core.group.003	Mac · UDP 端點	lsof -nP -iUDP	macOS：顯示目前權限可見的 UDP 套接字及程序；UDP 沒有 TCP 式監聽狀態。
+@command	core.command.0153	core.group.003	Mac · 已建立 TCP	lsof -nP -iTCP -sTCP:ESTABLISHED	macOS：顯示目前權限可見的已建立 TCP 連線及程序。
+@command	core.command.0154	core.group.003	Mac · 鄰居快取	arp -an; printf '\\\\n--- IPv6 ---\\\\n'; ndp -an	macOS：顯示 IPv4 ARP 與 IPv6 NDP 鄰居快取。
+@command	core.command.0155	core.group.003	Mac · DNS 狀態	scutil --dns	macOS：顯示系統實際解析器及逐域、逐介面 DNS 選擇，比只讀某個網路服務更完整。
+@command	core.command.0156	core.group.003	Mac · 代理狀態	scutil --proxy	macOS：顯示系統代理、自動設定和例外清單；應用程式仍可能使用自己的代理設定。
+@command	core.command.0157	core.group.003	Mac · DNS 查詢	dig +short "{{input,網域,default=example.com}}"	macOS：使用系統內建 dig 查詢指定網域並輸出簡要結果。
+@command	core.command.0158	core.group.003	Mac · Ping 目標	ping -c 4 -W 3000 "{{input,目標主機,default=1.1.1.1}}"	macOS：向目標發送 4 個 ICMP 探測包；-W 的單位在 macOS 中為毫秒，防火牆可能丟棄 ICMP。
+@command	core.command.0159	core.group.003	Mac · 路由追蹤	traceroute -n -w 3 "{{input,目標主機,default=1.1.1.1}}"	macOS：不反向解析名稱地追蹤到目標的網路路徑，每次探測等待 3 秒。
+@command	core.command.0160	core.group.003	Mac · 測試 TCP 埠	nc -G 5 -vz "{{input,目標主機,default=1.1.1.1}}" "{{input,目標連接埠,default=22}}"	macOS：使用系統 netcat 測試 TCP 建連，5 秒連線逾時。
+@command	core.command.0161	core.group.003	Mac · HTTP 回應標頭	curl -fsSIL --max-time 10 "{{input,URL,default=https://example.com}}"	macOS：跟隨重定向並顯示 HTTP 回應標頭，10 秒逾時；憑證驗證保持啟用。
+@command	core.command.0162	core.group.003	Mac · 應用程式防火牆	/usr/libexec/ApplicationFirewall/socketfilterfw --getglobalstate; /usr/libexec/ApplicationFirewall/socketfilterfw --getstealthmode	macOS：顯示應用程式防火牆和隱身模式狀態，不修改設定。
+@command	core.command.0163	core.group.003	Mac · PF 防火牆	pfctl -s info; pfctl -sr	macOS/PF：唯讀顯示 PF 狀態和過濾規則；通常需要管理員權限才能讀取完整結果。
+@command	core.command.0164	core.group.003	Mac · 系統完整性保護	csrutil status	macOS：顯示 System Integrity Protection 狀態；不會修改恢復環境設定。
+@command	core.command.0165	core.group.003	Mac · FileVault 狀態	fdesetup status	macOS：顯示啟動卷 FileVault 加密狀態；某些詳情可能需要管理員權限。
+@command	core.command.0166	core.group.003	Mac · Gatekeeper 狀態	spctl --status	macOS：顯示 Gatekeeper 全域評估狀態，不修改安全策略。
+@command	core.command.0167	core.group.003	Mac · 可用系統更新	softwareupdate --list	macOS：查詢可用系統更新但不安裝；需要網路，執行可能耗時。
+@command	core.command.0168	core.group.003	Mac · 已安裝軟體套件	pkgutil --pkgs | sort	macOS：列出安裝器收據中的軟體套件識別碼；不等於完整應用程式清單。
+@command	core.command.0169	core.group.003	Mac · Homebrew 狀態	HOMEBREW_NO_AUTO_UPDATE=1 brew outdated --verbose	macOS/Homebrew：使用現有中繼資料顯示可升級的 formula 和 cask；需要 Homebrew，不自動刷新儲存庫中繼資料。
+@command	core.command.0170	core.group.003	Mac · 電源與電池	pmset -g batt; printf '\\\\n'; pmset -g custom	macOS：顯示電池/電源來源和各供電模式的電源管理設定。
+@command	core.command.0171	core.group.003	Mac · Time Machine 狀態	tmutil status	macOS：顯示目前 Time Machine 備份狀態；未設定或未執行備份時會顯示未執行。
+@command	core.command.0172	core.group.003	Mac · Java 版本	java -version	macOS：顯示目前 PATH 中 Java 的執行時版本；未安裝可用 JDK/JRE 時系統可能顯示安裝提示。
+@command	core.command.0173	core.group.003	Mac · Docker 容器	docker ps --all	macOS/Docker：顯示全部容器及狀態；需要 Docker CLI 且 Docker Desktop 或其他引擎正在執行。

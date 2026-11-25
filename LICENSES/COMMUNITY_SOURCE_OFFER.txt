@@ -1,0 +1,12 @@
+FastRemote source availability
+
+The FastRemote desktop source covered by Mozilla Public License 2.0 is
+available at https://github.com/feinir/FastRemote. For an official release,
+select the Git tag with the same version as the installed desktop application.
+The Mac App Store build uses the store edition of the same tagged source.
+
+Bundled third-party components remain under their own terms. The application
+ships THIRD_PARTY_NOTICES.txt and a LICENSES directory with their notices and
+licenses. The third-party source offer, including exact upstream locations and
+the contact procedure for corresponding source, is available at
+https://github.com/feinir/FastRemote/blob/main/SOURCE_OFFER.txt.

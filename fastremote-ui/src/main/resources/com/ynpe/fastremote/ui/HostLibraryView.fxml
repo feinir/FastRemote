@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import com.ynpe.fastremote.ui.LucideIconView?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ynpe.fastremote.ui.HostLibraryController" spacing="8.0" styleClass="component-page, catalog-controls-shell">
+ <HBox alignment="CENTER_LEFT" spacing="6.0" styleClass="component-toolbar"><TextField fx:id="hostSearchField" accessibleText="%legacy.fxml.feb95554de093549" promptText="%legacy.fxml.8e38396e9a01604e" HBox.hgrow="ALWAYS"/><Button accessibleText="%legacy.fxml.22a3f0c4b4bd8606" contentDisplay="GRAPHIC_ONLY" onAction="#createHost" styleClass="icon-button, catalog-create-button"><graphic><LucideIconView icon="PLUS" styleClass="catalog-create-icon"/></graphic><tooltip><Tooltip text="%legacy.fxml.22a3f0c4b4bd8606"/></tooltip></Button><Button accessibleText="%legacy.fxml.3d49d9fcb6d1bbc5" contentDisplay="GRAPHIC_ONLY" onAction="#createGroup" styleClass="icon-button, catalog-create-button"><graphic><LucideIconView icon="FOLDER_PLUS" styleClass="catalog-create-icon"/></graphic><tooltip><Tooltip text="%legacy.fxml.3d49d9fcb6d1bbc5"/></tooltip></Button></HBox>
+ <HBox spacing="6.0" styleClass="filter-row"><ToggleButton fx:id="hostAllFilter" selected="true" text="%legacy.fxml.5c55a67935af8f45"/><ToggleButton fx:id="hostFavoriteFilter" text="%legacy.fxml.60a53514eb9228a2"/><ToggleButton fx:id="hostRecentFilter" text="%legacy.fxml.997a5e6e513f2a90"/></HBox>
+ <TreeView fx:id="hostTree" accessibleText="%legacy.fxml.aa06292f69e56993" showRoot="false" styleClass="catalog-tree" VBox.vgrow="ALWAYS"/>
+</VBox>

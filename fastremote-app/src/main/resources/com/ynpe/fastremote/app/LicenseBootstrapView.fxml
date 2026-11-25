@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" styleClass="license-page">
+    <center><ScrollPane fitToWidth="true" hbarPolicy="NEVER" minWidth="0" minHeight="0" styleClass="license-scroll"><content>
+        <VBox minWidth="0" spacing="14" styleClass="license-content"><padding><Insets top="22" right="24" bottom="14" left="24"/></padding>
+            <Label text="%license.online.title" styleClass="license-title"/>
+            <Label text="%license.online.description" wrapText="true" minWidth="0" maxWidth="Infinity" styleClass="license-subtitle"/>
+            <Separator/>
+            <Label fx:id="statusLabel" text="%license.working" wrapText="true" minWidth="0" maxWidth="Infinity" styleClass="license-status" accessibleRoleDescription="License status"/>
+            <VBox minWidth="0" spacing="7"><Label text="%license.code" labelFor="$licenseCode" styleClass="license-section-title"/>
+                <HBox minWidth="0" spacing="10" alignment="CENTER_LEFT"><TextField fx:id="licenseCode" minWidth="0" promptText="FRM-•••••-•••••-•••••-•••••" HBox.hgrow="ALWAYS" onAction="#activate"/><Button fx:id="activateButton" minWidth="-Infinity" text="%license.activate" onAction="#activate" defaultButton="true" styleClass="primary-button"/></HBox>
+            </VBox>
+            <HBox minWidth="0" alignment="CENTER_LEFT" spacing="10"><Label text="%license.trial.description" wrapText="true" minWidth="0" maxWidth="Infinity" HBox.hgrow="ALWAYS" styleClass="license-subtitle"/><Button fx:id="trialButton" minWidth="-Infinity" text="%license.startTrial" onAction="#startTrial"/></HBox>
+        </VBox>
+    </content></ScrollPane></center>
+    <bottom><HBox minWidth="0" alignment="CENTER_RIGHT" spacing="10" styleClass="license-actions"><padding><Insets top="12" right="24" bottom="22" left="24"/></padding><Button fx:id="retryButton" minWidth="-Infinity" text="%license.retry" onAction="#checkStatus"/><Button fx:id="openOfflineButton" minWidth="-Infinity" text="%license.offline.open" onAction="#openOffline"/></HBox></bottom>
+</BorderPane>

@@ -1,0 +1,31 @@
+// SPDX-License-Identifier: MPL-2.0
+package com.ynpe.fastremote.domain.automation;
+
+public enum AutomationCapability {
+    READ_HOST_METADATA,
+    OPEN_HOST,
+    MANAGE_WORKSPACE,
+    READ_WORKSPACE,
+    EDIT_WORKSPACE,
+    READ_WORKSPACE_LOG,
+    READ_TERMINAL_OUTPUT,
+    IMPORT_EXPORT,
+    READ_LIBRARY,
+    MANAGE_LIBRARY,
+    CREATE_HOSTS,
+    DELETE_HOSTS,
+    EDIT_HOSTS,
+    READ_LOCAL,
+    CREATE_LOCAL,
+    EDIT_LOCAL,
+    DELETE_LOCAL,
+    RENAME_LOCAL,
+    READ_REMOTE,
+    CREATE_REMOTE,
+    EDIT_REMOTE,
+    DELETE_REMOTE,
+    RENAME_REMOTE,
+    RUN_COMMAND,
+    UPLOAD,
+    DOWNLOAD
+}

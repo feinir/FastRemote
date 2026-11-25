@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import com.ynpe.fastremote.ui.LucideIconView?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ynpe.fastremote.ui.VariableLibraryController" styleClass="component-page">
+ <HBox spacing="6.0" styleClass="component-toolbar"><TextField fx:id="variableSearchField" accessibleText="%legacy.fxml.d21ed66023176625" promptText="%legacy.fxml.9dd862ed7bbc9c27" HBox.hgrow="ALWAYS"/><Button accessibleText="%legacy.fxml.300a3219c4cdcda8" contentDisplay="GRAPHIC_ONLY" onAction="#createVariable" styleClass="icon-button, catalog-create-button"><graphic><LucideIconView icon="PLUS" styleClass="catalog-create-icon"/></graphic><tooltip><Tooltip text="%legacy.fxml.300a3219c4cdcda8"/></tooltip></Button><Button accessibleText="%legacy.fxml.8d2d1a8e8380bdb5" contentDisplay="GRAPHIC_ONLY" onAction="#createVariableGroup" styleClass="icon-button, catalog-create-button"><graphic><LucideIconView icon="FOLDER_PLUS" styleClass="catalog-create-icon"/></graphic><tooltip><Tooltip text="%legacy.fxml.3d49d9fcb6d1bbc5"/></tooltip></Button></HBox>
+ <TreeView fx:id="variableTree" accessibleText="%legacy.fxml.0aefd44f7a90ca71" showRoot="false" styleClass="catalog-tree" VBox.vgrow="ALWAYS"/>
+ <Label maxWidth="Infinity" styleClass="component-help, snippet-help" text="%legacy.fxml.e0f809bfa3abefb3" wrapText="true"/>
+</VBox>

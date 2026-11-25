@@ -1,0 +1,45 @@
+HarmonyOS Sans SC
+
+Official source:
+https://developer.huawei.com/consumer/cn/design/resource/#aca70492-8edf-4ae8-b789-74ed7daa2796
+
+Downloaded: 2026-08-22
+Official archive SHA-256: 5440a3d9337828eda72e35f48fbb246873bca26e89644d433a8b01b85e45ef85
+Bundled HarmonyOS_Sans_SC.ttf SHA-256: 8978e05044e7089ad6a9de38c505c8148305607983487435a916d2610700a7ca
+
+The font file is bundled unmodified. See LICENSE-update.txt in this directory.
+
+HarmonyOS Sans TC Regular
+
+Official OpenHarmony system-resources mirror:
+https://gitcode.com/openharmony/resources.git
+
+Pinned source commit: 0d79cad76b37ba0f3ccb1323c83833c78e0860de
+Downloaded: 2026-08-26
+Bundled HarmonyOS_Sans_TC.ttf SHA-256: 42604cbcac172ccc099d00350fb494b8ccd944bb8a3516e402ee69828024db99
+
+The font file is bundled unmodified. Its repository LICENSE_Fonts contains the same HarmonyOS Sans
+Fonts License Agreement retained in LICENSE-update.txt in this directory.
+
+Noto Sans CJK JP/KR Regular
+
+Official source: https://github.com/notofonts/noto-cjk
+Pinned source commit: f8d157532fbfaeda587e826d4cd5b21a49186f7c
+Font sources:
+- Sans/OTF/Japanese/NotoSansCJKjp-Regular.otf
+- Sans/OTF/Korean/NotoSansCJKkr-Regular.otf
+Downloaded: 2026-08-27
+Bundled NotoSansCJKjp-Regular.otf SHA-256: 68a3fc98800b2a27b371f2fb79991daf3633bd89309d4ffaa6946fd587f375b5
+Bundled NotoSansCJKkr-Regular.otf SHA-256: 6bcb2a0703aa137e874fc2dffa85f6c21ba9a67fa329e81b8c801663af7e992a
+
+Noto Sans Thai Regular 2.002
+
+Official source: https://github.com/notofonts/thai
+Pinned release: NotoSansThai-v2.002
+Release asset: NotoSansThai-v2.002.zip
+Font source: NotoSansThai/googlefonts/ttf/NotoSansThai-Regular.ttf
+Downloaded: 2026-08-27
+Bundled NotoSansThai-Regular.ttf SHA-256: 7f890179ceabb5f34a17702271c83c015c807fc78deaf52de859f6ec8847c1cf
+
+These three Noto fonts are bundled unmodified. The SIL Open Font License 1.1 is included as
+NOTO_OFL.txt in this directory.

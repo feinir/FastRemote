@@ -1,0 +1,57 @@
+[versions]
+commonmark = "0.30.0"
+flowless = "0.7.4"
+junit = "5.14.4"
+junit-platform = "1.14.4"
+mina-sshd = "2.18.0"
+sqlite-jdbc = "3.53.2.1"
+bouncycastle = "1.85"
+snakeyaml-engine = "3.0.1"
+slf4j = "2.0.17"
+kotlin = "1.9.22"
+annotations = "24.0.1"
+pty4j = "0.13.9"
+jna = "5.14.0"
+jackson = "2.22.2"
+zxing = "3.5.3"
+richtextfx = "0.11.7"
+dbus-java = "5.2.0"
+tm4e = "0.17.2.202511281144"
+gson = "2.13.2"
+jcodings = "1.0.63"
+joni = "2.2.6"
+
+[libraries]
+reactfx = { module = "org.reactfx:reactfx", version = "2.0-M5" }
+undofx = { module = "org.fxmisc.undo:undofx", version = "2.1.1" }
+wellbehavedfx = { module = "org.fxmisc.wellbehaved:wellbehavedfx", version = "0.3.3" }
+commonmark = { module = "org.commonmark:commonmark", version.ref = "commonmark" }
+commonmark-tables = { module = "org.commonmark:commonmark-ext-gfm-tables", version.ref = "commonmark" }
+commonmark-strikethrough = { module = "org.commonmark:commonmark-ext-gfm-strikethrough", version.ref = "commonmark" }
+flowless = { module = "org.fxmisc.flowless:flowless", version.ref = "flowless" }
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit-platform" }
+mina-sshd-core = { module = "org.apache.sshd:sshd-core", version.ref = "mina-sshd" }
+mina-sshd-sftp = { module = "org.apache.sshd:sshd-sftp", version.ref = "mina-sshd" }
+sqlite-jdbc = { module = "org.xerial:sqlite-jdbc", version.ref = "sqlite-jdbc" }
+bouncycastle-provider = { module = "org.bouncycastle:bcprov-jdk18on", version.ref = "bouncycastle" }
+snakeyaml-engine = { module = "org.snakeyaml:snakeyaml-engine", version.ref = "snakeyaml-engine" }
+slf4j-nop = { module = "org.slf4j:slf4j-nop", version.ref = "slf4j" }
+slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
+jetbrains-annotations = { module = "org.jetbrains:annotations", version.ref = "annotations" }
+pty4j = { module = "org.jetbrains.pty4j:pty4j", version.ref = "pty4j" }
+jna = { module = "net.java.dev.jna:jna", version.ref = "jna" }
+jna-platform = { module = "net.java.dev.jna:jna-platform", version.ref = "jna" }
+jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
+jackson-datatype-jdk8 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jdk8", version.ref = "jackson" }
+jackson-datatype-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version.ref = "jackson" }
+zxing-core = { module = "com.google.zxing:core", version.ref = "zxing" }
+zxing-javase = { module = "com.google.zxing:javase", version.ref = "zxing" }
+dbus-java-core = { module = "com.github.hypfvieh:dbus-java-core", version.ref = "dbus-java" }
+dbus-java-native-unixsocket = { module = "com.github.hypfvieh:dbus-java-transport-native-unixsocket", version.ref = "dbus-java" }
+tm4e-core = { module = "org.eclipse.tm4e:org.eclipse.tm4e.core", version.ref = "tm4e" }
+tm4e-language-pack = { module = "org.eclipse.tm4e:org.eclipse.tm4e.language_pack", version.ref = "tm4e" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+jcodings = { module = "org.jruby.jcodings:jcodings", version.ref = "jcodings" }
+joni = { module = "org.jruby.joni:joni", version.ref = "joni" }

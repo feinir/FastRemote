@@ -1,0 +1,35 @@
+FASTREMOTE THIRD-PARTY SOURCE AVAILABILITY NOTICE
+Revision: 31 August 2026
+
+This notice applies to third-party components for which the applicable license
+requires source-code availability. The licensing and source availability of
+FastRemote's original code depend on the edition.
+
+For at least three years after the last FastRemote distribution containing the
+relevant component, FastRemote Project will provide the complete corresponding
+source code required by the applicable license on a medium customarily used for
+software exchange, for no more than the reasonable physical cost of providing
+that source. Submit a request through the support or purchase contact supplied
+with your FastRemote entitlement and identify the FastRemote version, platform,
+architecture, and requested component.
+
+The following upstream locations provide the preferred source form for the
+unmodified release baselines. FastRemote Project remains responsible for
+providing the applicable source and any required FastRemote-distributed changes
+when a valid request is made.
+
+* BellSoft Liberica JDK 21 Full 21.0.12.1+1-LTS (all target runtimes):
+  https://bell-sw.com/pages/downloads/
+  https://github.com/openjdk/jdk21u
+* Bundled JavaFX 21.0.12.1:
+  https://github.com/openjdk/jfx
+* Pty4J 0.13.9:
+  https://repo1.maven.org/maven2/org/jetbrains/pty4j/pty4j/0.13.9/pty4j-0.13.9-sources.jar
+* Eclipse TM4E Core and Language Pack 0.17.2, upstream commit
+  01e9b00d0145f8b7792ce5b0176ffcc4e74e0628:
+  https://github.com/eclipse-tm4e/tm4e/tree/0.17.2
+
+JediTermFX is used under the Apache License 2.0 option, which does not require
+distribution of its source code. Its provenance is nevertheless recorded as
+upstream version 1.1.0, commit 1eb3ae5a6de0c89cb9fc6ac3b8b3f20275691bf4,
+plus the FastRemote-maintained fork changes.
