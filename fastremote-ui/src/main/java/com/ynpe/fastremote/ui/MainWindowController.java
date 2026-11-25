@@ -1536,6 +1536,8 @@ public final class MainWindowController implements AutoCloseable {
         AtomicReference<Tab> localFileTab = new AtomicReference<>();
         LocalFileWorkspaceView.Loaded loaded = LocalFileWorkspaceView.load(workflow,
                 new LocalFileWorkspaceController.Actions() {
+                    @Override public boolean sandboxed() { return localTerminalWorkflow.isSandboxed(); }
+
                     @Override public void openPairedTerminal(Path directory) {
                         openPairedLocalTerminal(localWorkspace, directory);
                     }
@@ -13168,6 +13170,11 @@ public final class MainWindowController implements AutoCloseable {
         session.localStatisticsLabel = statistics;
         VBox browser = fileBrowser(bar, content, statistics);
         session.localBrowser = browser;
+        if (localTerminalWorkflow.isSandboxed()) {
+            browser.getChildren().add(1, SandboxFileAccess.notice(
+                    () -> chooseSftpLocalDirectory(session),
+                    () -> chooseSftpUploadFiles(session, session.currentRemotePath)));
+        }
         Platform.runLater(() -> requestLocalDirectory(session, path.getText(), table, path));
         return browser;
     }
@@ -13431,6 +13438,10 @@ public final class MainWindowController implements AutoCloseable {
 
     private void navigateToRoot(OpenSession session, boolean local) {
         if (local) {
+            if (localTerminalWorkflow.isSandboxed()) {
+                chooseSftpLocalDirectory(session);
+                return;
+            }
             try {
                 Path current = Path.of(session.currentLocalPath).toAbsolutePath().normalize();
                 loadLocalDirectory(session, current.getRoot() == null ? current : current.getRoot(),
@@ -13444,9 +13455,16 @@ public final class MainWindowController implements AutoCloseable {
     }
 
     private void navigateToHome(OpenSession session, boolean local) {
-        if (local) requestLocalDirectory(session, System.getProperty("user.home", "."),
+        if (local && localTerminalWorkflow.isSandboxed()) chooseSftpLocalDirectory(session);
+        else if (local) requestLocalDirectory(session, System.getProperty("user.home", "."),
                 session.localTable, session.localPathField);
         else loadRemoteDirectory(session, session.remoteHome, session.remoteTable, session.remotePathField);
+    }
+
+    private void chooseSftpLocalDirectory(OpenSession session) {
+        if (session.localTable == null || session.closed.get()) return;
+        SandboxFileAccess.chooseDirectory(rootPane.getScene().getWindow()).ifPresent(directory ->
+                loadLocalDirectory(session, directory, session.localTable, session.localPathField));
     }
 
     private void installLocalTableInteractions(OpenSession session, TableView<LocalFileEntry> table) {
@@ -15194,9 +15212,27 @@ public final class MainWindowController implements AutoCloseable {
         if (session.localTable == null || session.transferQueue == null) return;
         List<LocalFileEntry> selected = transferableLocalEntries(
                 List.copyOf(session.localTable.getSelectionModel().getSelectedItems()));
-        if (selected.isEmpty()) return;
+        if (selected.isEmpty()) {
+            if (localTerminalWorkflow.isSandboxed()) chooseSftpUploadFiles(session, remoteDirectory);
+            return;
+        }
         session.transferQueue.upload(selected, remoteDirectory);
         appendFileLog(session, com.ynpe.fastremote.i18n.Texts.text("legacy.java.4f90bef493b3f25e") + selected.size() + com.ynpe.fastremote.i18n.Texts.text("legacy.java.4c54e5cb422f358e") + remoteDirectory);
+    }
+
+    private void chooseSftpUploadFiles(OpenSession session, String remoteDirectory) {
+        if (session.transferQueue == null || session.closed.get()) return;
+        List<Path> selected = SandboxFileAccess.chooseUploadFiles(rootPane.getScene().getWindow());
+        if (selected.isEmpty()) return;
+        workflow.inspectLocalEntries(selected).whenComplete((entries, error) -> Platform.runLater(() -> {
+            if (session.closed.get()) return;
+            if (error != null) {
+                appendFileLog(session, sshSftpFailureMessage(error,
+                        com.ynpe.fastremote.i18n.Texts.text("localFiles.sandboxNotice")), StatusTone.ERROR);
+            } else {
+                uploadEntries(session, entries, remoteDirectory);
+            }
+        }));
     }
 
     private void uploadEntries(OpenSession session, List<LocalFileEntry> entries, String remoteDirectory) {

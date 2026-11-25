@@ -43,6 +43,19 @@ class SshConnectionWorkflowLocalFilesTest {
     }
 
     @Test
+    void inspectsOnlyTheFilesSelectedForUpload() throws Exception {
+        Path selected = Files.writeString(directory.resolve("selected.txt"), "upload");
+        Files.writeString(directory.resolve("unselected.txt"), "other");
+        try (var workflow = new SshConnectionWorkflow(new UnusedConnector(), new EmptyProfiles())) {
+            var entries = workflow.inspectLocalEntries(java.util.List.of(selected)).toCompletableFuture().get();
+            assertEquals(1, entries.size());
+            assertEquals(selected, entries.getFirst().path());
+            assertEquals("selected.txt", entries.getFirst().name());
+            assertEquals(6, entries.getFirst().size());
+        }
+    }
+
+    @Test
     void createsEveryLocalRootWithoutProbingUnavailableDrives() {
         Path available = directory.resolve("available-root");
         Path unavailable = directory.resolve("unavailable-root");

@@ -44,6 +44,7 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 
 import static com.ynpe.fastremote.ui.SftpBrowserModel.blankTableItem;
 import static com.ynpe.fastremote.ui.SftpBrowserModel.hasTreePlaceholder;
@@ -63,6 +64,7 @@ final class LocalFileWorkspaceController {
         void status(String message, boolean error);
         void addFavorite(Path directory);
         void directoryChanged(Path directory);
+        default boolean sandboxed() { return false; }
         default boolean showHiddenFiles() { return false; }
         default boolean showDirectoryTree() { return true; }
         default void setShowHiddenFiles(boolean show) { }
@@ -91,6 +93,7 @@ final class LocalFileWorkspaceController {
     private final Map<TreeItem<LocalFileEntry>, CompletableFuture<Void>> treeLoads =
             new IdentityHashMap<>();
 
+    @FXML private VBox root;
     @FXML private TextField pathField;
     @FXML private Button upButton;
     @FXML private Button refreshButton;
@@ -136,6 +139,9 @@ final class LocalFileWorkspaceController {
                 : Optional.ofNullable(currentDirectory.getParent()).orElse(currentDirectory)));
         refreshButton.setOnAction(ignored -> refreshViews());
         terminalButton.setOnAction(ignored -> actions.openPairedTerminal(currentDirectory));
+        if (actions.sandboxed()) {
+            root.getChildren().add(1, SandboxFileAccess.notice(this::chooseAuthorizedDirectory, null));
+        }
         rebuildFavorites();
         table.setOnKeyPressed(event -> {
             handleFileKey(event, selected(), currentDirectory);
@@ -374,14 +380,23 @@ final class LocalFileWorkspaceController {
 
     private void refresh() { if (currentDirectory != null) navigate(currentDirectory, false); }
 
+    private void chooseAuthorizedDirectory() {
+        SandboxFileAccess.chooseDirectory(pathField.getScene().getWindow()).ifPresent(this::navigate);
+    }
+
+    private void navigateShortcut(Path directory) {
+        if (actions.sandboxed()) chooseAuthorizedDirectory();
+        else navigate(directory);
+    }
+
     private void rebuildFavorites() {
         MenuItem add = item("localFiles.addFavorite", () -> addFavorite(currentDirectory));
         Path homePath = normalize(Path.of(System.getProperty("user.home", ".")));
         Path rootPath = homePath.getRoot() == null ? homePath : homePath.getRoot();
         MenuItem root = new MenuItem(text("legacy.java.42ee2863b6d776ff"));
-        root.setOnAction(ignored -> navigate(rootPath));
+        root.setOnAction(ignored -> navigateShortcut(rootPath));
         MenuItem home = new MenuItem("home");
-        home.setOnAction(ignored -> navigate(homePath));
+        home.setOnAction(ignored -> navigateShortcut(homePath));
         MenuItem manage = item("localFiles.manageFavorites", actions::manageFavorites);
         favoritesMenu = ApplicationContextMenus.create(add, manage, new SeparatorMenuItem(),
                 root, home, new SeparatorMenuItem());
@@ -444,8 +459,8 @@ final class LocalFileWorkspaceController {
                     .orElse(currentDirectory));
         });
         Path homePath = normalize(Path.of(System.getProperty("user.home", ".")));
-        root.setOnAction(ignored -> navigate(homePath.getRoot() == null ? homePath : homePath.getRoot()));
-        home.setOnAction(ignored -> navigate(homePath));
+        root.setOnAction(ignored -> navigateShortcut(homePath.getRoot() == null ? homePath : homePath.getRoot()));
+        home.setOnAction(ignored -> navigateShortcut(homePath));
         go.getItems().setAll(back, forward, up, root, home);
         List<String> paths = actions.favoritePaths().stream().distinct().limit(20).toList();
         if (!paths.isEmpty()) {

@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" spacing="0"
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:id="root" spacing="0"
       styleClass="sftp-file-browser,local-file-workspace">
     <children>
         <HBox alignment="CENTER_LEFT" spacing="8" styleClass="session-action-bar">

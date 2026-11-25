@@ -127,6 +127,14 @@ class LocalFileWorkspaceControllerTest {
                 var loaded = LocalFileWorkspaceView.load(new EmptyWorkflow(), new EmptyActions(),
                         Path.of(System.getProperty("user.home", ".")));
                 assertTrue(loaded.root().getStyleClass().contains("local-file-workspace"));
+                assertFalse(loaded.root().lookupAll(".hyperlink").stream().anyMatch(node ->
+                        node instanceof javafx.scene.control.Hyperlink link
+                                && link.getText().equals(Texts.text("localFiles.authorizeDirectory"))));
+                var sandboxed = LocalFileWorkspaceView.load(new EmptyWorkflow(), new EmptyActions(true),
+                        Path.of(System.getProperty("user.home", ".")));
+                assertTrue(sandboxed.root().lookupAll(".hyperlink").stream().anyMatch(node ->
+                        node instanceof javafx.scene.control.Hyperlink link
+                                && link.getText().equals(Texts.text("localFiles.authorizeDirectory"))));
             } catch (Throwable error) {
                 failure.set(error);
             } finally {
@@ -145,7 +153,8 @@ class LocalFileWorkspaceControllerTest {
         return new LocalFileEntry(name, Path.of(name), true, false, 0L, Optional.empty());
     }
 
-    private static final class EmptyActions implements LocalFileWorkspaceController.Actions {
+    private record EmptyActions(boolean sandboxed) implements LocalFileWorkspaceController.Actions {
+        private EmptyActions() { this(false); }
         @Override public void openPairedTerminal(Path directory) { }
         @Override public void edit(LocalFileEntry entry) { }
         @Override public void status(String message, boolean error) { }

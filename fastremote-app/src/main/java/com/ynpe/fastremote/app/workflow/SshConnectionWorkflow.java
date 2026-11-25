@@ -188,6 +188,16 @@ public final class SshConnectionWorkflow implements ConnectionWorkflow {
     }
 
     @Override
+    public CompletionStage<List<LocalFileEntry>> inspectLocalEntries(List<Path> selected) {
+        var paths = List.copyOf(selected);
+        return submitLocalFileTask(() -> {
+            List<LocalFileEntry> entries = new ArrayList<>(paths.size());
+            for (Path path : paths) entries.add(localEntry(path));
+            return List.copyOf(entries);
+        });
+    }
+
+    @Override
     public CompletionStage<Void> createLocalDirectory(Path path) {
         return submitLocalFileTask(() -> { Files.createDirectory(path); return null; });
     }

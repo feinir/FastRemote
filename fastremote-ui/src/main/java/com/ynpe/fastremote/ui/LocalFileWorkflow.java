@@ -13,6 +13,10 @@ public interface LocalFileWorkflow {
 
     CompletionStage<List<LocalFileEntry>> listLocal(Path directory);
 
+    default CompletionStage<List<LocalFileEntry>> inspectLocalEntries(List<Path> selected) {
+        return CompletableFuture.failedFuture(new UnsupportedOperationException("Local file inspection is unavailable"));
+    }
+
     CompletionStage<Void> createLocalDirectory(Path path);
 
     CompletionStage<Void> createLocalFile(Path path);
