@@ -1245,6 +1245,8 @@ val packagePkg = registerInstallerTask(
 )
 
 val macStoreInstallerIdentity = providers.environmentVariable("FASTREMOTE_MAC_STORE_INSTALLER_IDENTITY")
+val macStoreIntermediateCertificate = providers.gradleProperty("macStoreIntermediateCertificate")
+    .orElse("Apple Worldwide Developer Relations Certification Authority")
 val packageMacAppStore = tasks.register<Exec>("packageMacAppStore") {
     group = "distribution"
     description = "Creates the signed, sandboxed macOS package for App Store Connect."
@@ -1254,6 +1256,7 @@ val packageMacAppStore = tasks.register<Exec>("packageMacAppStore") {
     }
     inputs.dir(appImage)
     inputs.property("installerIdentity", macStoreInstallerIdentity.orElse(""))
+    inputs.property("intermediateCertificate", macStoreIntermediateCertificate)
     outputs.file(artifact)
     doFirst {
         check(store && currentPlatform == "macos") {
@@ -1269,7 +1272,7 @@ val packageMacAppStore = tasks.register<Exec>("packageMacAppStore") {
         val output = artifact.get().asFile
         output.parentFile.mkdirs()
         commandLine("productbuild", "--component", appImage.get().asFile.absolutePath, "/Applications",
-            "--sign", installerIdentity, output.absolutePath)
+            "--sign", installerIdentity, "--cert", macStoreIntermediateCertificate.get(), output.absolutePath)
     }
     doLast {
         val verify = ProcessBuilder("pkgutil", "--check-signature", artifact.get().asFile.absolutePath)
