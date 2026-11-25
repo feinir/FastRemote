@@ -1442,13 +1442,14 @@ public final class MainWindowController implements AutoCloseable {
                         return;
                     }
                     handle.applyKeyboardShortcuts(terminalShortcutSettings());
-                    Tab tab = new Tab(automationWorkspaceTabTitle(localTerminalTitle(), automationOwned));
-                    tab.setGraphic(WorkspaceTabGraphics.localTerminal());
                     StackPane host = new StackPane(handle.node());
                     host.getStyleClass().add("terminal-host");
                     installTerminalFocusHandler(host, handle::requestFocus);
                     installLocalPathDrop(host, handle);
-                    tab.setContent(host);
+                    Tab tab = LocalTerminalPresentation.createTab(
+                            automationWorkspaceTabTitle(localTerminalTitle(), automationOwned),
+                            host, localTerminalWorkflow.isSandboxed(), message -> setStatus(message, StatusTone.ERROR));
+                    tab.setGraphic(WorkspaceTabGraphics.localTerminal());
                     tab.setOnCloseRequest(event -> { event.consume(); closeLocalTerminal(tab); });
                     installWorkspaceTabContextMenu(tab);
                     localTerminals.put(tab, handle);

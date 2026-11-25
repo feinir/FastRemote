@@ -4,7 +4,8 @@ The FastRemote desktop source covered by Mozilla Public License 2.0 is
 available at https://github.com/feinir/FastRemote. For an official release,
 select the Git tag with the same version as the installed desktop application.
 For the Mac App Store build, use the tag with the same version and the
-`-store` suffix (for example, `v2.1.5-store`).
+`-store` suffix (for example, `v2.1.5-store`). When the build number differs
+from the version, append it to that tag (for example, `v2.1.5-store-2.1.6`).
 
 Bundled third-party components remain under their own terms. The application
 ships THIRD_PARTY_NOTICES.txt and a LICENSES directory with their notices and

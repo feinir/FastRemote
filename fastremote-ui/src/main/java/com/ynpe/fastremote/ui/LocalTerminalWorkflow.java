@@ -6,6 +6,8 @@ import java.nio.file.Path;
 import java.util.concurrent.CompletionStage;
 
 public interface LocalTerminalWorkflow extends AutoCloseable {
+    default boolean isSandboxed() { return false; }
+
     CompletionStage<LocalTerminalHandle> open(TerminalPreferences preferences);
 
     default CompletionStage<LocalTerminalHandle> openAutomation(

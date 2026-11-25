@@ -29,7 +29,7 @@ import javafx.application.Platform;
 
 /** Starts a real local PTY under the permissions of the application process. */
 public final class PtyLocalTerminalWorkflow implements LocalTerminalWorkflow {
-    private final boolean appStore;
+    private final boolean sandboxed;
     private final ExecutorService executor = new ThreadPoolExecutor(0, 32, 60L, TimeUnit.SECONDS,
             new SynchronousQueue<>(), Thread.ofVirtual().name("fastremote-local-pty-", 0).factory(),
             new ThreadPoolExecutor.AbortPolicy());
@@ -40,8 +40,11 @@ public final class PtyLocalTerminalWorkflow implements LocalTerminalWorkflow {
     }
 
     public PtyLocalTerminalWorkflow(boolean appStore) {
-        this.appStore = appStore;
+        String containerId = System.getenv("APP_SANDBOX_CONTAINER_ID");
+        sandboxed = appStore || (containerId != null && !containerId.isBlank());
     }
+
+    @Override public boolean isSandboxed() { return sandboxed; }
 
     @Override public CompletionStage<LocalTerminalHandle> open(TerminalPreferences preferences) {
         return open(preferences, Path.of(System.getProperty("user.home")));
@@ -62,17 +65,17 @@ public final class PtyLocalTerminalWorkflow implements LocalTerminalWorkflow {
         if (closed.get()) return CompletableFuture.failedFuture(new IllegalStateException(com.ynpe.fastremote.i18n.Texts.text("legacy.java.685f7422410b19af")));
         Path home = Path.of(System.getProperty("user.home")).toAbsolutePath().normalize();
         Path requestedDirectory = initialDirectory.toAbsolutePath().normalize();
-        // The Store PTY inherits static sandbox permissions. A directory granted to the GUI
+        // The PTY inherits static sandbox permissions. A directory granted to the GUI
         // through a file picker does not become the shell's working directory outside the container.
-        Path resolvedWorkingDirectory = (!appStore || requestedDirectory.startsWith(home))
+        Path resolvedWorkingDirectory = (!sandboxed || requestedDirectory.startsWith(home))
                 && java.nio.file.Files.isDirectory(requestedDirectory) ? requestedDirectory : home;
         return CompletableFuture.supplyAsync(() -> {
             LocalShellStartup startup = null;
             try {
                 Map<String, String> environment = new HashMap<>(System.getenv());
                 environment.put("TERM", preferences.terminalType().ptyName());
-                String[] command = appStore ? new String[]{"/bin/zsh", "-f"} : shellCommand();
-                if (appStore) environment.put("PATH", "/usr/bin:/bin:/usr/sbin:/sbin");
+                String[] command = sandboxed ? new String[]{"/bin/zsh", "-f"} : shellCommand();
+                if (sandboxed) environment.put("PATH", "/usr/bin:/bin:/usr/sbin:/sbin");
                 configureShellEnvironment(environment, command);
                 if (com.ynpe.fastremote.app.CommandLineToolInstallation.available()) {
                     Path cliBin = com.ynpe.fastremote.app.CommandLineToolInstallation.prepare(environment);

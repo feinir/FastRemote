@@ -1546,9 +1546,29 @@ class MainWindowControllerTest {
     }
 
     @Test
-    void everyLocalTerminalUsesTheSameUserFacingTitle() {
-        assertEquals("本地终端", WorkspaceViewModel.localTerminalTitle());
-        assertEquals(WorkspaceViewModel.localTerminalTitle(), WorkspaceViewModel.localTerminalTitle());
+    void localTerminalShowsTheSandboxNoticeOnlyInSandboxMode() throws Exception {
+        var test = new java.util.concurrent.FutureTask<Void>(() -> {
+            String title = WorkspaceViewModel.localTerminalTitle();
+            StackPane ordinaryHost = new StackPane();
+            var ordinary = LocalTerminalPresentation.createTab(title, ordinaryHost, false, ignored -> { });
+            assertEquals("本地终端", ordinary.getText());
+            assertSame(ordinaryHost, ordinary.getContent());
+
+            StackPane sandboxedHost = new StackPane();
+            var sandboxed = LocalTerminalPresentation.createTab(title, sandboxedHost, true, ignored -> { });
+            assertEquals(ordinary.getText(), sandboxed.getText());
+            var content = (javafx.scene.layout.BorderPane) sandboxed.getContent();
+            assertSame(sandboxedHost, content.getCenter());
+            var notice = (javafx.scene.layout.HBox) content.getTop();
+            assertEquals("当前运行在沙盒模式下，部分本地终端命令不可用。",
+                    ((javafx.scene.control.Label) notice.getChildren().getFirst()).getText());
+            var download = (javafx.scene.control.Hyperlink) notice.getChildren().getLast();
+            assertEquals("前往 YNPE 下载完整版", download.getText());
+            assertEquals("https://download.ynpe.com/community/", download.getTooltip().getText());
+            return null;
+        });
+        Platform.runLater(test);
+        test.get(5, TimeUnit.SECONDS);
     }
 
     @Test

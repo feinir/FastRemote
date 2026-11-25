@@ -646,14 +646,22 @@ val verifyPackagingInputs = tasks.register("verifyPackagingInputs") {
 }
 
 val macStoreMinimumSystemVersion = "12.0"
+val macStoreBuildVersion = providers.gradleProperty("macStoreBuildVersion").orElse(packageVersion).map { version ->
+    check(version.matches(Regex("[1-9][0-9]{0,3}(\\.[0-9]{1,2}){0,2}"))) {
+        "Invalid macStoreBuildVersion '$version'. Use an Apple build number such as 2.1.6."
+    }
+    version
+}
 val macStoreJpackageResources = layout.buildDirectory.dir("jpackage/store/macos/resources")
 val prepareMacStoreJpackageResources = tasks.register<Sync>("prepareMacStoreJpackageResources") {
     from(platformJpackageResources)
     into(macStoreJpackageResources)
     inputs.property("minimumSystemVersion", macStoreMinimumSystemVersion)
+    inputs.property("buildVersion", macStoreBuildVersion)
     filesMatching("Info.plist") {
         filter { line: String ->
             line.replace("<string>10.11</string>", "<string>$macStoreMinimumSystemVersion</string>")
+                .replace("DEPLOY_BUNDLE_CFBUNDLE_VERSION", macStoreBuildVersion.get())
         }
     }
 }
@@ -946,6 +954,15 @@ val packageAppImage = tasks.register("packageAppImage") {
                 check(readMinimumVersion.waitFor() == 0 && minimumVersion == macStoreMinimumSystemVersion) {
                     "Packaged Mac App Store application must require macOS $macStoreMinimumSystemVersion, " +
                         "but reported $minimumVersion"
+                }
+                val readVersions = ProcessBuilder(
+                    "/usr/libexec/PlistBuddy", "-c", "Print :CFBundleShortVersionString",
+                    "-c", "Print :CFBundleVersion", infoPlist.absolutePath,
+                ).redirectErrorStream(true).start()
+                val versions = readVersions.inputStream.bufferedReader().use { it.readLines() }
+                val expected = listOf(packageVersion.get(), macStoreBuildVersion.get())
+                check(readVersions.waitFor() == 0 && versions == expected) {
+                    "Packaged Mac App Store application must report version and build $expected, but reported $versions"
                 }
             }
             val readLocalNetworkDescription = ProcessBuilder(
